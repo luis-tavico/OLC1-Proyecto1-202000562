@@ -1,30 +1,79 @@
 package analizadores;
+
 import java_cup.runtime.*;
+import java.util.LinkedList;
+import errors.SintaxError;
 
 parser code {:
 
+    public LinkedList<SintaxError> sintaxErrors = new LinkedList<>();
+
     public void syntax_error(Symbol s){
-        System.out.println("Error sintactico: "+s.value+", Linea "+(s.left+1)+" Columna "+(s.right+1));
+        if (s.value != null)
+            sintaxErrors.add(new SintaxError(s.value.toString(), s.left, s.right));
+        System.out.println("Error sintactico en: " + s.value + ", Linea: " + (s.left+1) + ", Columna: " + (s.right+1));
     }
 
-    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
-        System.out.println("Error sintactico NR: "+s.value+", Linea "+(s.left+1)+" Columna "+(s.right+1));
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+        System.out.println("Error sintactico NR en: " + s.value + ", Linea: " + (s.left+1) + ", Columna: " + (s.right+1));
     }
 
-:}
+            :}
 
-terminal PR_VOID, PARENTESIS_ABIERTO, PARENTESIS_CERRADO, LLAVE_ABIERTA, LLAVE_CERRADA, CORCHETE_ABIERTO, CORCHETE_CERRADO,
-MAYOR_QUE, MENOR_QUE, DOLAR, IGUAL, PUNTO, COMA, PUNTO_Y_COMA, DOS_PUNTOS, COMILLA_DOBLE, IDENTIFICADOR, LETRA_MINUSCULA, LETRA_MAYUSCULA,
-NUMERO, CARACTERES_ESPECIALES;
+terminal TIPO_RETORNO, IF, CONSOLE, WRITE, INT, DOUBLE, CHAR, BOOL, STRING, PARENTESIS_ABIERTO, PARENTESIS_CERRADO, LLAVE_ABIERTA, LLAVE_CERRADA, CORCHETE_ABIERTO, CORCHETE_CERRADO,
+MENOR, MAYOR, IGUAL, PUNTO, COMA, PUNTO_COMA, DOS_PUNTOS, COMILLA_DOBLE, DECIMAL, ENTERO, CADENA, CARACTER, BOOLEANO, IDENTIFICADOR;
 
-non terminal Codigo;
+non terminal ini;
+non terminal instrucciones;
+non terminal metodo_inicial;
+non terminal sentencia;
+non terminal sentencia_if;
+non terminal asignacion;
+non terminal asign_decla_int;
+non terminal asign_decla_double;
+non terminal asign_decla_char;
+non terminal asign_decla_bool;
+non terminal asign_decla_string;
+non terminal imprimir;
 non terminal lexema;
 
-start with Codigo;
+start with ini;
 
-Codigo::= lexema Codigo 
-        | lexema;
+ini ::= instrucciones;
 
-lexema::= PR_VOID | PARENTESIS_ABIERTO | PARENTESIS_CERRADO | LLAVE_ABIERTA | LLAVE_CERRADA | CORCHETE_ABIERTO | CORCHETE_CERRADO |
-MAYOR_QUE | MENOR_QUE | DOLAR | IGUAL | PUNTO | COMA | PUNTO_Y_COMA | DOS_PUNTOS | COMILLA_DOBLE | IDENTIFICADOR | LETRA_MINUSCULA | LETRA_MAYUSCULA |
-NUMERO | CARACTERES_ESPECIALES;
+instrucciones ::= metodo_inicial
+                | asignacion
+                | imprimir;
+
+metodo_inicial ::= TIPO_RETORNO IDENTIFICADOR PARENTESIS_ABIERTO PARENTESIS_CERRADO LLAVE_ABIERTA sentencia LLAVE_CERRADA;
+
+sentencia ::= sentencia_if;
+
+sentencia_if ::= IF PARENTESIS_ABIERTO PARENTESIS_CERRADO LLAVE_ABIERTA LLAVE_CERRADA;
+ 
+asignacion ::= asign_decla_int
+             | asign_decla_double
+             | asign_decla_char
+             | asign_decla_bool
+             | asign_decla_string
+             | lexema;
+
+asign_decla_int ::= INT IDENTIFICADOR PUNTO_COMA
+                 | INT IDENTIFICADOR IGUAL ENTERO PUNTO_COMA;
+
+asign_decla_double ::= DOUBLE IDENTIFICADOR PUNTO_COMA
+                    | DOUBLE IDENTIFICADOR IGUAL DECIMAL PUNTO_COMA; 
+
+asign_decla_char ::= CHAR IDENTIFICADOR PUNTO_COMA
+                  | CHAR IDENTIFICADOR IGUAL CARACTER PUNTO_COMA; 
+
+asign_decla_bool ::= BOOL IDENTIFICADOR PUNTO_COMA
+                  | BOOL IDENTIFICADOR:id IGUAL BOOLEANO:val PUNTO_COMA{: System.out.println("var " + id + " = " + val); :};
+
+asign_decla_string ::= STRING IDENTIFICADOR PUNTO_COMA
+                    | STRING IDENTIFICADOR IGUAL CADENA PUNTO_COMA;
+
+imprimir ::= CONSOLE PUNTO WRITE PARENTESIS_ABIERTO PARENTESIS_CERRADO PUNTO_COMA;
+
+lexema::= PARENTESIS_ABIERTO | PARENTESIS_CERRADO | LLAVE_ABIERTA | LLAVE_CERRADA | CORCHETE_ABIERTO | CORCHETE_CERRADO |
+MENOR | MAYOR | PUNTO | COMA | DOS_PUNTOS | COMILLA_DOBLE;
