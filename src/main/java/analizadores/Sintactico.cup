@@ -1,0 +1,30 @@
+package analizadores;
+import java_cup.runtime.*;
+
+parser code {:
+
+    public void syntax_error(Symbol s){
+        System.out.println("Error sintactico: "+s.value+", Linea "+(s.left+1)+" Columna "+(s.right+1));
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        System.out.println("Error sintactico NR: "+s.value+", Linea "+(s.left+1)+" Columna "+(s.right+1));
+    }
+
+:}
+
+terminal PR_VOID, PARENTESIS_ABIERTO, PARENTESIS_CERRADO, LLAVE_ABIERTA, LLAVE_CERRADA, CORCHETE_ABIERTO, CORCHETE_CERRADO,
+MAYOR_QUE, MENOR_QUE, DOLAR, IGUAL, PUNTO, COMA, PUNTO_Y_COMA, DOS_PUNTOS, COMILLA_DOBLE, IDENTIFICADOR, LETRA_MINUSCULA, LETRA_MAYUSCULA,
+NUMERO, CARACTERES_ESPECIALES;
+
+non terminal Codigo;
+non terminal lexema;
+
+start with Codigo;
+
+Codigo::= lexema Codigo 
+        | lexema;
+
+lexema::= PR_VOID | PARENTESIS_ABIERTO | PARENTESIS_CERRADO | LLAVE_ABIERTA | LLAVE_CERRADA | CORCHETE_ABIERTO | CORCHETE_CERRADO |
+MAYOR_QUE | MENOR_QUE | DOLAR | IGUAL | PUNTO | COMA | PUNTO_Y_COMA | DOS_PUNTOS | COMILLA_DOBLE | IDENTIFICADOR | LETRA_MINUSCULA | LETRA_MAYUSCULA |
+NUMERO | CARACTERES_ESPECIALES;
