@@ -36,14 +36,21 @@ ENTERO = [0-9]+
 CADENA = \" ([^\"] | "\\\"")+ \"
 CARACTER = \' ([^\'] | "\\\'") \'
 BOOLEANO = true | false
-IDENTIFICADOR = [a-zA-Z_][a-zA-Z0-9_]+
+IDENTIFICADOR = [a-zA-Z]+ | [a-zA-Z_][a-zA-Z0-9_]+
 
 %%
 
 "void"                  { return new Symbol(sym.TIPO_RETORNO, yyline, (int)yychar, yytext()); }
-
 "if"                    { return new Symbol(sym.IF, yyline, (int)yychar, yytext()); }
-
+"elif"                  { return new Symbol(sym.ELIF, yyline, (int)yychar, yytext()); }
+"else"                  { return new Symbol(sym.ELSE, yyline, (int)yychar, yytext()); }
+"switch"                { return new Symbol(sym.SWITCH, yyline, (int)yychar, yytext()); }
+"case"                  { return new Symbol(sym.CASE, yyline, (int)yychar, yytext()); }
+"break"                 { return new Symbol(sym.BREAK, yyline, (int)yychar, yytext()); }
+"default"               { return new Symbol(sym.DEFAULT, yyline, (int)yychar, yytext()); }
+"for"                   { return new Symbol(sym.FOR, yyline, (int)yychar, yytext()); }
+"while"                 { return new Symbol(sym.WHILE, yyline, (int)yychar, yytext()); }
+"do"                    { return new Symbol(sym.DO, yyline, (int)yychar, yytext()); }
 "console"               { return new Symbol(sym.CONSOLE, yyline, (int)yychar, yytext()); }
 "write"                 { return new Symbol(sym.WRITE, yyline, (int)yychar, yytext()); }
 
@@ -53,6 +60,15 @@ IDENTIFICADOR = [a-zA-Z_][a-zA-Z0-9_]+
 "bool"                  { return new Symbol(sym.BOOL, yyline, (int)yychar, yytext()); }
 "string"                { return new Symbol(sym.STRING, yyline, (int)yychar, yytext()); }
 
+"&&"                    { return new Symbol(sym.AND, yyline, (int)yychar, yytext()); }
+"||"                    { return new Symbol(sym.OR, yyline, (int)yychar, yytext()); }
+"!"                     { return new Symbol(sym.NOT, yyline, (int)yychar, yytext()); }
+"++"                    { return new Symbol(sym.INCREMENTO, yyline, (int)yychar, yytext()); }
+"--"                    { return new Symbol(sym.DECREMENTO, yyline, (int)yychar, yytext()); }
+"=="                    { return new Symbol(sym.IGUAL_QUE, yyline, (int)yychar, yytext()); }
+"!="                    { return new Symbol(sym.DISTINTO_QUE, yyline, (int)yychar, yytext()); }
+"<="                    { return new Symbol(sym.MENOR_IGUAL, yyline, (int)yychar, yytext()); }
+">="                    { return new Symbol(sym.MAYOR_IGUAL, yyline, (int)yychar, yytext()); }
 "("                     { return new Symbol(sym.PARENTESIS_ABIERTO, yyline, (int)yychar, yytext()); }
 ")"                     { return new Symbol(sym.PARENTESIS_CERRADO, yyline, (int)yychar, yytext()); }
 "{"                     { return new Symbol(sym.LLAVE_ABIERTA, yyline, (int)yychar, yytext()); }
@@ -62,6 +78,10 @@ IDENTIFICADOR = [a-zA-Z_][a-zA-Z0-9_]+
 "<"                     { return new Symbol(sym.MENOR, yyline, (int)yychar, yytext()); }
 ">"                     { return new Symbol(sym.MAYOR, yyline, (int)yychar, yytext()); }
 "="                     { return new Symbol(sym.IGUAL, yyline, (int)yychar, yytext()); }
+"+"                     { return new Symbol(sym.MAS, yyline, (int)yychar, yytext()); }
+"-"                     { return new Symbol(sym.MENOS, yyline, (int)yychar, yytext()); }
+"*"                     { return new Symbol(sym.ASTERISCO, yyline, (int)yychar, yytext()); }
+"/"                     { return new Symbol(sym.DIAGONAL, yyline, (int)yychar, yytext()); }
 "."                     { return new Symbol(sym.PUNTO, yyline, (int)yychar, yytext()); }
 ","                     { return new Symbol(sym.COMA, yyline, (int)yychar, yytext()); }
 ";"                     { return new Symbol(sym.PUNTO_COMA, yyline, (int)yychar, yytext()); }

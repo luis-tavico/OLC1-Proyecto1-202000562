@@ -11,7 +11,7 @@ parser code {:
     public void syntax_error(Symbol s){
         if (s.value != null)
             sintaxErrors.add(new SintaxError(s.value.toString(), s.left, s.right));
-        System.out.println("Error sintactico en: " + s.value + ", Linea: " + (s.left+1) + ", Columna: " + (s.right+1));
+        System.out.println("Error sintactico en: " + s.value.toString() + ", Linea: " + (s.left) + ", Columna: " + (s.right));
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
@@ -20,60 +20,91 @@ parser code {:
 
             :}
 
-terminal TIPO_RETORNO, IF, CONSOLE, WRITE, INT, DOUBLE, CHAR, BOOL, STRING, PARENTESIS_ABIERTO, PARENTESIS_CERRADO, LLAVE_ABIERTA, LLAVE_CERRADA, CORCHETE_ABIERTO, CORCHETE_CERRADO,
-MENOR, MAYOR, IGUAL, PUNTO, COMA, PUNTO_COMA, DOS_PUNTOS, COMILLA_DOBLE, DECIMAL, ENTERO, CADENA, CARACTER, BOOLEANO, IDENTIFICADOR;
+terminal TIPO_RETORNO, IF, ELIF, ELSE, SWITCH, CASE, BREAK, DEFAULT, FOR, WHILE, DO, CONSOLE, WRITE;
+terminal INT, DOUBLE, CHAR, BOOL, STRING;
+terminal AND, OR, NOT; 
+terminal INCREMENTO, DECREMENTO; 
+terminal IGUAL_QUE, DISTINTO_QUE, MENOR_IGUAL, MAYOR_IGUAL, PARENTESIS_ABIERTO, PARENTESIS_CERRADO,
+         LLAVE_ABIERTA, LLAVE_CERRADA, CORCHETE_ABIERTO, CORCHETE_CERRADO, MENOR, MAYOR, IGUAL,
+         MAS, MENOS, ASTERISCO, DIAGONAL, PUNTO, COMA, PUNTO_COMA, DOS_PUNTOS, COMILLA_DOBLE, 
+         DECIMAL, ENTERO, CADENA, CARACTER, BOOLEANO, IDENTIFICADOR;
 
 non terminal ini;
-non terminal instrucciones;
+non terminal codigo;
 non terminal metodo_inicial;
-non terminal sentencia;
-non terminal sentencia_if;
+non terminal instrucciones;
+non terminal instruccion;
+non terminal declaracion;
+non terminal declaracion_int, declaracion_double, declaracion_char, declaracion_bool, declaracion_string;
 non terminal asignacion;
-non terminal asign_decla_int;
-non terminal asign_decla_double;
-non terminal asign_decla_char;
-non terminal asign_decla_bool;
-non terminal asign_decla_string;
+non terminal asignacion_int, asignacion_double, asignacion_char, asignacion_bool, asignacion_string;
+non terminal sentencia;
+non terminal sentencia_if, sentencia_for;
+non terminal expresion_relacional;
+non terminal valor_comparar;
+non terminal operador;
 non terminal imprimir;
 non terminal lexema;
 
 start with ini;
 
-ini ::= instrucciones;
+ini ::= codigo;
 
-instrucciones ::= metodo_inicial
-                | asignacion
-                | imprimir;
+codigo ::= metodo_inicial;
 
-metodo_inicial ::= TIPO_RETORNO IDENTIFICADOR PARENTESIS_ABIERTO PARENTESIS_CERRADO LLAVE_ABIERTA sentencia LLAVE_CERRADA;
+metodo_inicial ::= TIPO_RETORNO IDENTIFICADOR PARENTESIS_ABIERTO PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA;
 
-sentencia ::= sentencia_if;
+instrucciones ::= instruccion instrucciones
+                | instruccion;
 
-sentencia_if ::= IF PARENTESIS_ABIERTO PARENTESIS_CERRADO LLAVE_ABIERTA LLAVE_CERRADA;
- 
-asignacion ::= asign_decla_int
-             | asign_decla_double
-             | asign_decla_char
-             | asign_decla_bool
-             | asign_decla_string
-             | lexema;
+instruccion ::= declaracion
+              | asignacion
+              | sentencia
+              | imprimir;
 
-asign_decla_int ::= INT IDENTIFICADOR PUNTO_COMA
-                 | INT IDENTIFICADOR IGUAL ENTERO PUNTO_COMA;
+declaracion ::= declaracion_int
+              | declaracion_double
+              | declaracion_char
+              | declaracion_bool
+              | declaracion_string;
 
-asign_decla_double ::= DOUBLE IDENTIFICADOR PUNTO_COMA
-                    | DOUBLE IDENTIFICADOR IGUAL DECIMAL PUNTO_COMA; 
+declaracion_int ::= INT IDENTIFICADOR PUNTO_COMA;
+declaracion_double ::= DOUBLE IDENTIFICADOR PUNTO_COMA;
+declaracion_char ::= CHAR IDENTIFICADOR PUNTO_COMA;
+declaracion_bool ::= BOOL IDENTIFICADOR PUNTO_COMA;
+declaracion_string ::= STRING IDENTIFICADOR PUNTO_COMA;
 
-asign_decla_char ::= CHAR IDENTIFICADOR PUNTO_COMA
-                  | CHAR IDENTIFICADOR IGUAL CARACTER PUNTO_COMA; 
+asignacion ::= asignacion_int
+             | asignacion_double
+             | asignacion_char
+             | asignacion_bool
+             | asignacion_string;
 
-asign_decla_bool ::= BOOL IDENTIFICADOR PUNTO_COMA
-                  | BOOL IDENTIFICADOR:id IGUAL BOOLEANO:val PUNTO_COMA{: System.out.println("var " + id + " = " + val); :};
+asignacion_int ::= INT IDENTIFICADOR IGUAL ENTERO PUNTO_COMA;
+asignacion_double  ::= DOUBLE IDENTIFICADOR IGUAL DECIMAL PUNTO_COMA; 
+asignacion_char ::= CHAR IDENTIFICADOR IGUAL CARACTER PUNTO_COMA; 
+asignacion_bool ::= BOOL IDENTIFICADOR IGUAL BOOLEANO PUNTO_COMA;
+asignacion_string ::= STRING IDENTIFICADOR IGUAL CADENA PUNTO_COMA;
 
-asign_decla_string ::= STRING IDENTIFICADOR PUNTO_COMA
-                    | STRING IDENTIFICADOR IGUAL CADENA PUNTO_COMA;
 
-imprimir ::= CONSOLE PUNTO WRITE PARENTESIS_ABIERTO PARENTESIS_CERRADO PUNTO_COMA;
+sentencia ::= sentencia_if
+            | sentencia_for;
 
-lexema::= PARENTESIS_ABIERTO | PARENTESIS_CERRADO | LLAVE_ABIERTA | LLAVE_CERRADA | CORCHETE_ABIERTO | CORCHETE_CERRADO |
-MENOR | MAYOR | PUNTO | COMA | DOS_PUNTOS | COMILLA_DOBLE;
+sentencia_if ::= IF PARENTESIS_ABIERTO expresion_relacional:s PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA {: RESULT = s; System.out.println(s); :};
+sentencia_switch ::= SWITCH PARENTESIS_ABIERTO ENTERO PARENTESIS_CERRADO LLAVE_CERRADA;
+sentencia_for ::= FOR PARENTESIS_ABIERTO asignacion_int expresion_relacional PUNTO_COMA IDENTIFICADOR INCREMENTO PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA;
+
+expresion_relacional ::= valor_comparar operador:s valor_comparar {: RESULT = s; :};
+
+valor_comparar ::= IDENTIFICADOR
+                 | ENTERO
+                 | DECIMAL;
+
+operador ::= MAYOR:s {: RESULT = s; :}
+           | MENOR:s {: RESULT = s; :}
+           | MAYOR_IGUAL:s {: RESULT = s; :}
+           | MENOR_IGUAL:s {: RESULT = s; :}
+           | IGUAL_QUE:s {: RESULT = s; :}
+           | DISTINTO_QUE:s {: RESULT = s; :};
+
+imprimir ::= CONSOLE PUNTO WRITE PARENTESIS_ABIERTO CADENA PARENTESIS_CERRADO PUNTO_COMA;

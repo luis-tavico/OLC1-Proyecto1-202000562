@@ -8,42 +8,73 @@ package analizadores;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int PUNTO = 20;
-  public static final int MENOR = 17;
-  public static final int PARENTESIS_ABIERTO = 11;
-  public static final int CADENA = 27;
-  public static final int IGUAL = 19;
-  public static final int INT = 6;
-  public static final int DECIMAL = 25;
-  public static final int CHAR = 8;
-  public static final int CORCHETE_CERRADO = 16;
-  public static final int CONSOLE = 4;
+  public static final int DIAGONAL = 41;
+  public static final int CHAR = 17;
+  public static final int CORCHETE_CERRADO = 34;
+  public static final int ENTERO = 48;
+  public static final int CASE = 7;
+  public static final int DOUBLE = 16;
+  public static final int DOS_PUNTOS = 45;
+  public static final int INT = 15;
+  public static final int ASTERISCO = 40;
+  public static final int PARENTESIS_ABIERTO = 29;
+  public static final int FOR = 10;
+  public static final int LLAVE_ABIERTA = 31;
+  public static final int WRITE = 14;
+  public static final int IDENTIFICADOR = 52;
+  public static final int NOT = 22;
+  public static final int AND = 20;
+  public static final int IGUAL = 37;
   public static final int TIPO_RETORNO = 2;
+  public static final int CARACTER = 50;
+  public static final int DISTINTO_QUE = 26;
+  public static final int OR = 21;
+  public static final int BOOL = 18;
+  public static final int INCREMENTO = 23;
   public static final int IF = 3;
-  public static final int BOOLEANO = 29;
-  public static final int WRITE = 5;
-  public static final int DOS_PUNTOS = 23;
-  public static final int CARACTER = 28;
-  public static final int LLAVE_ABIERTA = 13;
-  public static final int PARENTESIS_CERRADO = 12;
-  public static final int COMA = 21;
-  public static final int STRING = 10;
-  public static final int COMILLA_DOBLE = 24;
-  public static final int MAYOR = 18;
+  public static final int PUNTO_COMA = 44;
+  public static final int COMILLA_DOBLE = 46;
+  public static final int DECIMAL = 47;
+  public static final int CORCHETE_ABIERTO = 33;
   public static final int EOF = 0;
+  public static final int DECREMENTO = 24;
   public static final int error = 1;
-  public static final int IDENTIFICADOR = 30;
-  public static final int PUNTO_COMA = 22;
-  public static final int BOOL = 9;
-  public static final int ENTERO = 26;
-  public static final int LLAVE_CERRADA = 14;
-  public static final int CORCHETE_ABIERTO = 15;
-  public static final int DOUBLE = 7;
+  public static final int COMA = 43;
+  public static final int CADENA = 49;
+  public static final int MENOS = 39;
+  public static final int MENOR = 35;
+  public static final int BREAK = 8;
+  public static final int SWITCH = 6;
+  public static final int MAYOR = 36;
+  public static final int ELSE = 5;
+  public static final int PUNTO = 42;
+  public static final int WHILE = 11;
+  public static final int IGUAL_QUE = 25;
+  public static final int DEFAULT = 9;
+  public static final int MAYOR_IGUAL = 28;
+  public static final int BOOLEANO = 51;
+  public static final int STRING = 19;
+  public static final int PARENTESIS_CERRADO = 30;
+  public static final int LLAVE_CERRADA = 32;
+  public static final int MENOR_IGUAL = 27;
+  public static final int ELIF = 4;
+  public static final int DO = 12;
+  public static final int CONSOLE = 13;
+  public static final int MAS = 38;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "TIPO_RETORNO",
   "IF",
+  "ELIF",
+  "ELSE",
+  "SWITCH",
+  "CASE",
+  "BREAK",
+  "DEFAULT",
+  "FOR",
+  "WHILE",
+  "DO",
   "CONSOLE",
   "WRITE",
   "INT",
@@ -51,6 +82,15 @@ public class sym {
   "CHAR",
   "BOOL",
   "STRING",
+  "AND",
+  "OR",
+  "NOT",
+  "INCREMENTO",
+  "DECREMENTO",
+  "IGUAL_QUE",
+  "DISTINTO_QUE",
+  "MENOR_IGUAL",
+  "MAYOR_IGUAL",
   "PARENTESIS_ABIERTO",
   "PARENTESIS_CERRADO",
   "LLAVE_ABIERTA",
@@ -60,6 +100,10 @@ public class sym {
   "MENOR",
   "MAYOR",
   "IGUAL",
+  "MAS",
+  "MENOS",
+  "ASTERISCO",
+  "DIAGONAL",
   "PUNTO",
   "COMA",
   "PUNTO_COMA",
