@@ -8,9 +8,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
+import java.util.LinkedList;
+import errors.LexicalError;
+import errors.SintaxError;
+import instructions.Statement;
+import utils.Utils;
+import utils.AnalyzerResult;
 
 public class interfaz extends javax.swing.JFrame {
 
+    LinkedList<Statement> ast;
+    LinkedList<LexicalError> lexErrors;
+    LinkedList<SintaxError> sintaxErrors;
     int linea = 1;
     int columna = 1;
     String analizadorActual = "StatPy";
@@ -29,7 +38,7 @@ public class interfaz extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         areaCodigo = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        areaResultado = new javax.swing.JTextArea();
         lblAnalizadorActual = new javax.swing.JLabel();
         posicion = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -64,11 +73,11 @@ public class interfaz extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(areaCodigo);
 
-        jTextArea2.setEditable(false);
-        jTextArea2.setColumns(20);
-        jTextArea2.setFont(new java.awt.Font("MS Reference Sans Serif", 0, 12)); // NOI18N
-        jTextArea2.setRows(5);
-        jScrollPane2.setViewportView(jTextArea2);
+        areaResultado.setEditable(false);
+        areaResultado.setColumns(20);
+        areaResultado.setFont(new java.awt.Font("MS Reference Sans Serif", 0, 12)); // NOI18N
+        areaResultado.setRows(5);
+        jScrollPane2.setViewportView(areaResultado);
 
         lblAnalizadorActual.setFont(new java.awt.Font("Candara", 1, 14)); // NOI18N
         lblAnalizadorActual.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -307,14 +316,32 @@ public class interfaz extends javax.swing.JFrame {
 
     private void btnEjecutarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEjecutarMousePressed
         String contenido = this.areaCodigo.getText();
-        try {
-            Lexico scanner = new Lexico(new java.io.StringReader(contenido));
-            Sintactico parser = new Sintactico(scanner);
-            parser.parse();
-            System.out.println("¡Analisis Finalizado!");
-        } catch (Exception e) {
-            System.out.println(e);
+
+        if (this.analizadorActual.equals("StatPy")) {
+            try {
+                Lexico scanner = new Lexico(new java.io.StringReader(contenido));
+                Sintactico parser = new Sintactico(scanner);
+                parser.parse();
+                System.out.println("¡Analisis Finalizado!");
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        } else if (this.analizadorActual.equals("JSON")) {
+            System.out.println("JSON");
         }
+
+        //Codigo
+        /*
+        if (this.analizadorActual.equals("StatPy")) {
+            if (ast == null) {
+                JOptionPane.showMessageDialog(this, "No se ha ejecutado el archivo", "Error", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            this.areaCodigo.insert(Utils.translatePython(ast), 0);
+        } else if (this.analizadorActual.equals("JSON")) {
+            System.out.println("JSON");
+        }
+         */
     }//GEN-LAST:event_btnEjecutarMousePressed
 
     private void btnEjecutarMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEjecutarMouseReleased
@@ -406,6 +433,7 @@ public class interfaz extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea areaCodigo;
+    private javax.swing.JTextArea areaResultado;
     private javax.swing.JMenuItem btnAbrir;
     private javax.swing.JMenu btnEjecutar;
     private javax.swing.JMenuItem btnGuardar;
@@ -417,7 +445,6 @@ public class interfaz extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea2;
     private javax.swing.JLabel lblAnalizadorActual;
     private javax.swing.JMenu menuAnalizador;
     private javax.swing.JMenu menuArchivo;

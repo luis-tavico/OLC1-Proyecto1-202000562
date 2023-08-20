@@ -4,69 +4,90 @@ import java_cup.runtime.*;
 import java.util.LinkedList;
 import errors.SintaxError;
 
+import instructions.Statement;
+import instructions.Operation;
+import instructions.Param;
+
+import enums.EnumOperations;
+import enums.EnumTerminals;
+import enums.EnumUnitaryOperations;
+
 parser code {:
 
-    public LinkedList<SintaxError> sintaxErrors = new LinkedList<>();
+    public LinkedList<Statement> AST;
+    public LinkedList<SintaxError> errors = new LinkedList<>();
 
     public void syntax_error(Symbol s){
         if (s.value != null)
-            sintaxErrors.add(new SintaxError(s.value.toString(), s.left, s.right));
-        System.out.println("Error sintactico en: " + s.value.toString() + ", Linea: " + (s.left) + ", Columna: " + (s.right));
+            errors.add(new SintaxError(s.value.toString(), s.left, s.right));
+        System.out.println("Error sintactico en: " + s.value.toString() + ", Linea: " + (s.left) + ", Columna: " + (s.right-1));
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
-        System.out.println("Error sintactico NR en: " + s.value + ", Linea: " + (s.left+1) + ", Columna: " + (s.right+1));
+        System.out.println("Error sintactico NR en: " + s.value + ", Linea: " + (s.left) + ", Columna: " + (s.right-1));
     }
 
             :}
 
-terminal TIPO_RETORNO, IF, ELIF, ELSE, SWITCH, CASE, BREAK, DEFAULT, FOR, WHILE, DO, CONSOLE, WRITE;
-terminal INT, DOUBLE, CHAR, BOOL, STRING;
-terminal AND, OR, NOT; 
-terminal INCREMENTO, DECREMENTO; 
-terminal IGUAL_QUE, DISTINTO_QUE, MENOR_IGUAL, MAYOR_IGUAL, PARENTESIS_ABIERTO, PARENTESIS_CERRADO,
+terminal String TIPO_RETORNO, IF, ELSE, SWITCH, CASE, BREAK, DEFAULT, FOR, WHILE, DO, CONSOLE, WRITE;
+terminal String INT, DOUBLE, CHAR, BOOL, STRING;
+terminal String AND, OR, NOT; 
+terminal String INCREMENTO, DECREMENTO; 
+terminal String IGUAL_QUE, DISTINTO_QUE, MENOR_IGUAL, MAYOR_IGUAL, PARENTESIS_ABIERTO, PARENTESIS_CERRADO,
          LLAVE_ABIERTA, LLAVE_CERRADA, CORCHETE_ABIERTO, CORCHETE_CERRADO, MENOR, MAYOR, IGUAL,
-         MAS, MENOS, ASTERISCO, DIAGONAL, PUNTO, COMA, PUNTO_COMA, DOS_PUNTOS, COMILLA_DOBLE, 
+         MAS, MENOS, POR, DIVIDIDO, PUNTO, COMA, PUNTO_COMA, DOS_PUNTOS, COMILLA_DOBLE, 
          DECIMAL, ENTERO, CADENA, CARACTER, BOOLEANO, IDENTIFICADOR;
 
 non terminal ini;
-non terminal codigo;
-non terminal metodo_inicial;
-non terminal instrucciones;
-non terminal instruccion;
+
+non terminal LinkedList<Statement> instrucciones;
+non terminal Statement instruccion
+non terminal Operation expresion_aritmetica;
+non terminal LinkedList<Statement> metodo_inicial;
 non terminal declaracion;
 non terminal declaracion_int, declaracion_double, declaracion_char, declaracion_bool, declaracion_string;
 non terminal asignacion;
 non terminal asignacion_int, asignacion_double, asignacion_char, asignacion_bool, asignacion_string;
 non terminal sentencia;
-non terminal sentencia_if, sentencia_for;
+non terminal sentencia_if, sentencia_switch, sentencia_for, sentencia_while, sentencia_do_while, sentencia_imprimir;
+non terminal sentencia_else_if;
+non terminal sentencia_else;
+non terminal sentencia_case;
+non terminal sentencia_default;
 non terminal expresion_relacional;
+non terminal operador_relacional;
+non terminal expresion_logica;
+non terminal operador_logico;
 non terminal valor_comparar;
-non terminal operador;
-non terminal imprimir;
-non terminal lexema;
+
+non terminal Operation aritmetic;
+non terminal Operation logical;
+non terminal Operation symbols;
+non terminal Operation unitary;
+
+precedence left MAS, MENOS;
+precedence left POR, DIVIDIDO;
 
 start with ini;
 
-ini ::= codigo;
+ini ::= metodo_inicial {: parser.AST = s; :} ;
 
-codigo ::= metodo_inicial;
+metodo_inicial ::= TIPO_RETORNO IDENTIFICADOR PARENTESIS_ABIERTO PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones:s LLAVE_CERRADA {: RESULT = s; :};
 
-metodo_inicial ::= TIPO_RETORNO IDENTIFICADOR PARENTESIS_ABIERTO PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA;
-
-instrucciones ::= instruccion instrucciones
-                | instruccion;
+instrucciones ::= instruccion:s instrucciones:t  {: RESULT = s; RESULT.add(t); :}
+                | instruccion:s {: RESULT = new LinkedList<Statement>(); RESULT.add(s); :};
 
 instruccion ::= declaracion
               | asignacion
               | sentencia
-              | imprimir;
+              | expresion_aritmetica:a {: RESULT = a; :};
 
 declaracion ::= declaracion_int
               | declaracion_double
               | declaracion_char
               | declaracion_bool
-              | declaracion_string;
+              | declaracion_string
+              | expresion_aritmetica;
 
 declaracion_int ::= INT IDENTIFICADOR PUNTO_COMA;
 declaracion_double ::= DOUBLE IDENTIFICADOR PUNTO_COMA;
@@ -88,23 +109,55 @@ asignacion_string ::= STRING IDENTIFICADOR IGUAL CADENA PUNTO_COMA;
 
 
 sentencia ::= sentencia_if
-            | sentencia_for;
+            | sentencia_switch
+            | sentencia_for
+            | sentencia_while
+            | sentencia_do_while
+            | sentencia_imprimir;
 
-sentencia_if ::= IF PARENTESIS_ABIERTO expresion_relacional:s PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA {: RESULT = s; System.out.println(s); :};
-sentencia_switch ::= SWITCH PARENTESIS_ABIERTO ENTERO PARENTESIS_CERRADO LLAVE_CERRADA;
+sentencia_if ::= IF PARENTESIS_ABIERTO expresion_relacional:s PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA {: RESULT = s; System.out.println(s); :}
+     | IF PARENTESIS_ABIERTO expresion_relacional:s PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA sentencia_else_if sentencia_else {: RESULT = s; System.out.println(s); :}
+     | IF PARENTESIS_ABIERTO expresion_relacional:s PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA sentencia_else_if {: RESULT = s; System.out.println(s); :}
+     | IF PARENTESIS_ABIERTO expresion_relacional:s PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA sentencia_else {: RESULT = s; System.out.println(s); :};
+
+sentencia_else_if ::= sentencia_else_if ELSE IF PARENTESIS_ABIERTO expresion_relacional:s PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA
+                    | ELSE IF PARENTESIS_ABIERTO expresion_relacional:s PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA;
+sentencia_else ::= ELSE LLAVE_ABIERTA instrucciones LLAVE_CERRADA;
+
+sentencia_switch ::= SWITCH PARENTESIS_ABIERTO IDENTIFICADOR PARENTESIS_CERRADO LLAVE_ABIERTA sentencia_case LLAVE_CERRADA
+                   | SWITCH PARENTESIS_ABIERTO IDENTIFICADOR PARENTESIS_CERRADO LLAVE_ABIERTA sentencia_case sentencia_default LLAVE_CERRADA;
+
+sentencia_case ::= sentencia_case CASE ENTERO DOS_PUNTOS instrucciones
+                 | CASE ENTERO DOS_PUNTOS instrucciones;
+
+sentencia_default ::= DEFAULT DOS_PUNTOS instrucciones;
+
 sentencia_for ::= FOR PARENTESIS_ABIERTO asignacion_int expresion_relacional PUNTO_COMA IDENTIFICADOR INCREMENTO PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA;
+sentencia_while ::= WHILE PARENTESIS_ABIERTO expresion_relacional PARENTESIS_CERRADO LLAVE_ABIERTA instrucciones LLAVE_CERRADA;
+sentencia_do_while ::= DO LLAVE_ABIERTA instrucciones LLAVE_CERRADA WHILE PARENTESIS_ABIERTO expresion_relacional PARENTESIS_CERRADO PUNTO_COMA;
+sentencia_imprimir ::= CONSOLE PUNTO WRITE PARENTESIS_ABIERTO CADENA PARENTESIS_CERRADO PUNTO_COMA;
 
-expresion_relacional ::= valor_comparar operador:s valor_comparar {: RESULT = s; :};
+expresion_logica ::= expresion_relacional operador_logico expresion_relacional;
+
+expresion_relacional ::= valor_comparar operador_relacional:s valor_comparar {: RESULT = s; :};
 
 valor_comparar ::= IDENTIFICADOR
                  | ENTERO
                  | DECIMAL;
 
-operador ::= MAYOR:s {: RESULT = s; :}
-           | MENOR:s {: RESULT = s; :}
-           | MAYOR_IGUAL:s {: RESULT = s; :}
-           | MENOR_IGUAL:s {: RESULT = s; :}
-           | IGUAL_QUE:s {: RESULT = s; :}
-           | DISTINTO_QUE:s {: RESULT = s; :};
+operador_relacional ::= MAYOR:s {: RESULT = s; :}
+                      | MENOR:s {: RESULT = s; :}
+                      | MAYOR_IGUAL:s {: RESULT = s; :}
+                      | MENOR_IGUAL:s {: RESULT = s; :}
+                      | IGUAL_QUE:s {: RESULT = s; :}
+                      | DISTINTO_QUE:s {: RESULT = s; :};
 
-imprimir ::= CONSOLE PUNTO WRITE PARENTESIS_ABIERTO CADENA PARENTESIS_CERRADO PUNTO_COMA;
+operador_logico ::= AND
+                  | OR;
+
+expresion_aritmetica ::= expresion_aritmetica:a MAS expresion_aritmetica:b {: RESULT = new Operation(a, EnumOperations.MAS, b); :}
+                       | expresion_aritmetica:a MENOS expresion_aritmetica:b {: RESULT = new Operation(a, EnumOperations.MENOS, b); :}
+                       | expresion_aritmetica:a POR expresion_aritmetica:b {: RESULT = new Operation(a, EnumOperations.POR, b); :}
+                       | expresion_aritmetica:a DIVIDIDO expresion_aritmetica:b {: RESULT = new Operation(a, EnumOperations.DIVIDIDO, b); :}
+                       | ENTERO:n {: RESULT = new Operation(n, EnumTerminals.ENTERO); :}
+                       | DECIMAL:n {: RESULT = new Operation(n, EnumTerminals.DECIMAL); :};
