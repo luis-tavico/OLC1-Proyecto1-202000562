@@ -4,13 +4,6 @@ import enums.EnumTypes;
 import utils.Utils;
 
 public class Param implements Statement {
-    private final String guid = Utils.generateGuid();
-
-    @Override
-    public String getGuid() {
-        return this.guid;
-    }
-
     String id;
     EnumTypes type;
 

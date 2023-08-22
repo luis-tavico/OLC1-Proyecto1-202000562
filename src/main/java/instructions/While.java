@@ -2,16 +2,8 @@ package instructions;
 
 import java.util.LinkedList;
 import utils.Utils;
-import utils.PythonUtils;
 
 public class While implements Statement {
-    private final String guid = Utils.generateGuid();
-
-    @Override
-    public String getGuid() {
-        return this.guid;
-    }
-
     Operation expr;
     LinkedList<Statement> statements;
 

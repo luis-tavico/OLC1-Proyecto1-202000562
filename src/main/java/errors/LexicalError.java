@@ -1,13 +1,13 @@
 package errors;
 
 public class LexicalError {
-    public String lexema;
-    public int linea;
-    public int columna;
+    public String lexeme;
+    public int line;
+    public int column;
     
-    public LexicalError(String lexema, int linea, int columna){
-        this.lexema = lexema;
-        this.linea = linea;
-        this.columna = columna;
+    public LexicalError(String lexeme, int line, int column){
+        this.lexeme = lexeme;
+        this.line = line;
+        this.column = column;
     }
 }

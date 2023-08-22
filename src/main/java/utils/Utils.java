@@ -4,18 +4,16 @@ import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import analizadores.Lexico;
-import analizadores.Sintactico;
+import analyzers.Lexical;
+import analyzers.Syntactic;
 import enums.EnumTypes;
 import instructions.Statement;
 
 public class Utils {
 
-    int id = 0;
-
     public static AnalyzerResult loadFile(String input) throws Exception {
-        Lexico scanner = new Lexico(new StringReader(input));
-        Sintactico parser = new Sintactico(scanner);
+        Lexical scanner = new Lexical(new StringReader(input));
+        Syntactic parser = new Syntactic(scanner);
         try {
             parser.parse();
         } catch (Exception ex) {
@@ -61,19 +59,19 @@ public class Utils {
         type = type.toLowerCase();
         switch (type) {
             case "int" -> {
-                return EnumTypes.ENTERO;
+                return EnumTypes.INTEGER;
             }
             case "double" -> {
                 return EnumTypes.DECIMAL;
             }
             case "string" -> {
-                return EnumTypes.CADENA;
+                return EnumTypes.TEXT;
             }
             case "char" -> {
-                return EnumTypes.CARACTER;
+                return EnumTypes.CHARACTER;
             }
             case "bool" -> {
-                return EnumTypes.BOOLEANO;
+                return EnumTypes.BOOLEAN;
             }
             default ->
                 throw new AssertionError();
@@ -82,19 +80,19 @@ public class Utils {
 
     public static String viewTypes(EnumTypes type) {
         switch (type) {
-            case ENTERO -> {
+            case INTEGER -> {
                 return "int";
             }
             case DECIMAL -> {
                 return "double";
             }
-            case CADENA -> {
+            case TEXT -> {
                 return "string";
             }
-            case CARACTER -> {
+            case CHARACTER -> {
                 return "char";
             }
-            case BOOLEANO -> {
+            case BOOLEAN -> {
                 return "bool";
             }
             default ->

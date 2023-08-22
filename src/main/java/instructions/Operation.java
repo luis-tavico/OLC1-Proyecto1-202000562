@@ -5,11 +5,8 @@ import enums.EnumTerminals;
 import enums.EnumUnitaryOperations;
 import enums.TypeOperation;
 import utils.PythonUtils;
-import utils.Utils;
 
 public class Operation implements Statement {
-
-    private final String guid = Utils.generateGuid();
 
     // Binary operations
     Operation left;
@@ -46,27 +43,12 @@ public class Operation implements Statement {
     public Operation(String value, EnumTerminals typeTerminal) {
         this.typeTerminal = typeTerminal;
         this.typeOp = TypeOperation.TERMINAL;
-
-        if (typeTerminal == EnumTerminals.CARACTER) {
-            if (value.length() > 1) {
-                this.value = Character.toString((char) Integer.parseInt(value.replace("${", "").replace("}", "")));
-            } else {
-                this.value = value;
-            }
-            return;
-        }
         this.value = value;
-
     }
 
     public Operation(Operation value) {
         this.opGroup = value;
         this.typeOp = TypeOperation.GROUP;
-    }
-
-    @Override
-    public String getGuid() {
-        return this.guid;
     }
 
     @Override

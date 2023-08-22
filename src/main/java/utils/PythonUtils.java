@@ -8,41 +8,41 @@ public class PythonUtils {
 
     public static String pythonSymbolBinaryOperators(EnumOperations op) {
         switch (op) {
-            case MAS -> {
+            case PLUS -> {
                 return "+";
             }
-            case MENOS -> {
+            case MINUS -> {
                 return "-";
             }
-            case POR -> {
+            case TIMES -> {
                 return "*";
             }
-            case DIVIDIDO -> {
+            case DIVIDE -> {
                 return "/";
             }
             case AND -> {
-                return "+";
+                return "and";
             }
             case OR -> {
-                return "+";
+                return "or";
             }
-            case IGUAL_QUE -> {
-                return "+";
+            case EQUAL_TO -> {
+                return "==";
             }
-            case DISTINTO_QUE -> {
-                return "+";
+            case NOT_EQUAL_TO -> {
+                return "!=";
             }
-            case MAYOR -> {
-                return "+";
+            case GREATER_THAN -> {
+                return ">";
             }
-            case MENOR -> {
-                return "+";
+            case LESS_THAN -> {
+                return "<";
             }
-            case MAYOR_IGUAL -> {
-                return "+";
+            case GREATER_EQUAL -> {
+                return ">=";
             }
-            case MENOR_IGUAL -> {
-                return "+";
+            case LESS_EQUAL -> {
+                return "<=";
             }
             default ->
                 throw new AssertionError();
@@ -51,27 +51,23 @@ public class PythonUtils {
 
     public static String pythonTerminals(String value, EnumTerminals type) {
         switch (type) {
-            case IDENTIFICADOR -> {
+            case ID -> {
                 return value;
             }
-            case ENTERO -> {
+            case INTEGER -> {
                 return value;
             }
             case DECIMAL -> {
                 return value;
             }
-            case CADENA -> {
-                boolean contains = value.contains("\n");
-                if (!contains) {
-                    return "\"" + value + "\"";
-                } else {
-                    return "'''" + value + "'''";
-                }
+            case TEXT -> {
+                return value;
+
             }
-            case CARACTER -> {
-                return "'" + value + "'";
+            case CHARACTER -> {
+                return value;
             }
-            case BOOLEANO -> {
+            case BOOLEAN -> {
                 if ("true".equals(value)) {
                     return "True";
                 } else if ("false".equals(value)) {
@@ -86,7 +82,7 @@ public class PythonUtils {
 
     public static String pythonSymbolUnitaryOperators(EnumUnitaryOperations op) {
         switch (op) {
-            case NEGATIVE -> {
+            case MINUS -> {
                 return "-";
             }
             case NOT -> {

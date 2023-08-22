@@ -1,0 +1,54 @@
+package analyzersJSON;
+
+import java_cup.runtime.*;
+import java.util.LinkedList;
+import errors.SintaxError;
+
+
+parser code {:
+
+    public LinkedList<SintaxError> errors = new LinkedList<>();
+
+    public void syntax_error(Symbol s){
+        if (s.value != null)
+            errors.add(new SintaxError(s.value.toString(), s.left, (s.right-1)));
+        System.out.println("Error sintactico en: " + s.value.toString() + ", Linea: " + (s.left) + ", Columna: " + (s.right-1));
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+        System.out.println("Error sintactico NR en: " + s.value + ", Linea: " + (s.left+1) + ", Columna: " + (s.right+1));
+    }
+
+            :}
+
+terminal String LEFT_CURLY_BRACKET, RIGHT_CURLY_BRACKET, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, COMMA, COLON;
+terminal String NULL, DECIMAL, INTEGER, STRING, BOOLEAN;
+
+non terminal success, valid_json, value, object, member_list, pair, array, value_list;
+
+success ::= valid_json  {: System.out.println("\nParsing completed successfully."); :};
+
+valid_json ::= array | object;
+
+object ::= LEFT_CURLY_BRACKET {: System.out.println("\nParsing object... "); :} RIGHT_CURLY_BRACKET {: System.out.println("Empty object parsed."); :} | 
+           LEFT_CURLY_BRACKET {: System.out.println("\nParsing object... "); :} member_list RIGHT_CURLY_BRACKET {: System.out.println("Object parsed."); :}; 
+
+member_list ::= member_list COMMA pair 
+              | pair;
+
+pair ::= STRING:k {: System.out.print("Key " + k + " : "); :} COLON value;
+
+
+array ::= LEFT_SQUARE_BRACKET {: System.out.println("\nParsing array... "); :} RIGHT_SQUARE_BRACKET {: System.out.println("Empty array parsed."); :} 
+        | LEFT_SQUARE_BRACKET {: System.out.println("\nParsing array... "); :} value_list RIGHT_SQUARE_BRACKET {: System.out.println("Array parsed."); :};
+
+value_list ::= value_list COMMA value 
+             | value;
+
+value ::= STRING  :s {: System.out.print(s + " (string)\n"); :}
+        | INTEGER :i {: System.out.print(i + " (integer number)\n"); :}
+        | DECIMAL :d {: System.out.print(d.toString() + " (number in scientific notation)\n"); :}
+        | BOOLEAN :b {: System.out.print(b + " (boolean literal)\n"); :}
+        | NULL {: System.out.print("null (null literal)\n"); :}
+        | array
+        | object;

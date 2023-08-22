@@ -1,0 +1,105 @@
+package analyzers;
+
+import java_cup.runtime.*;
+import java.util.LinkedList;
+import errors.SintaxError;
+
+import instructions.Statement;
+import instructions.Operation;
+import instructions.Param;
+
+import instructions.Print;
+
+import enums.EnumOperations;
+import enums.EnumTerminals;
+import enums.EnumUnitaryOperations;
+
+parser code {:
+
+    public LinkedList<Statement> AST;
+    public LinkedList<SintaxError> errors = new LinkedList<>();
+
+    public void syntax_error(Symbol s){
+        if (s.value != null)
+            errors.add(new SintaxError(s.value.toString(), s.left, (s.right-1)));
+        System.out.println("Error sintactico en: " + s.value.toString() + ", Linea: " + (s.left) + ", Columna: " + (s.right-1));
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+        System.out.println("Error sintactico NR en: " + s.value + ", Linea: " + (s.left+1) + ", Columna: " + (s.right+1));
+    }
+
+            :}
+
+terminal String VOID, MAIN, IF, ELSE, SWITCH, CASE, BREAK, DEFAULT, FOR, WHILE, DO, CONSOLE, WRITE;
+terminal String DECIMAL, INTEGER, TEXT, CHARACTER, BOOLEAN, ID;
+terminal String INT, DOUBLE, CHAR, BOOL, STRING;
+terminal String AND, OR, NOT; 
+terminal String PLUS, MINUS, TIMES, DIVIDE;
+terminal String LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_CURLY_BRACKET, RIGHT_CURLY_BRACKET, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET,
+                LESS_THAN, GREATER_THAN, LESS_EQUAL, GREATER_EQUAL, EQUAL, EQUAL_TO, NOT_EQUAL_TO, PERIOD, SEMI_COLON, COLON, INCREASE, DECREASE;
+
+non terminal ini;
+
+non terminal LinkedList<Statement> statements;
+non terminal Statement statement;
+non terminal Operation expr;
+
+non terminal Operation symbols;
+non terminal Operation aritmetic;
+non terminal Operation logical;
+non terminal Operation unitary;
+
+non terminal Statement mainstatement;
+non terminal LinkedList<Statement> mainstatements;
+
+precedence left GREATER_THAN, LESS_THAN, GREATER_EQUAL, LESS_EQUAL, EQUAL_TO, NOT_EQUAL_TO;
+precedence left AND, OR;
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
+precedence left LEFT_PARENTHESIS;
+
+start with ini;
+
+ini ::= VOID MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS LEFT_CURLY_BRACKET mainstatements:s RIGHT_CURLY_BRACKET {: parser.AST = s; :};
+
+mainstatements ::= mainstatement:s mainstatements:t  {: RESULT=t; RESULT.add(s); :}
+                 | mainstatement:s {: RESULT = new LinkedList<Statement>(); RESULT.add(s); :};
+
+mainstatement ::= statement:s {: RESULT = s; :};
+
+statements ::= statement:s statements:t  {: RESULT=t; RESULT.add(s); :}
+             | statement:s {: RESULT = new LinkedList<Statement>(); RESULT.add(s); :};
+
+statement ::= CONSOLE PERIOD WRITE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS SEMI_COLON {: RESULT = new Print(e); :}
+            | error SEMI_COLON;
+
+expr ::= symbols:s {:RESULT = s;:}
+       | aritmetic:a {:RESULT = a;:}
+       | logical:l {:RESULT = l;:}
+       | unitary:u {:RESULT = u;:}
+       | LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS {: RESULT = new Operation(e); :};
+
+symbols ::= ID:i {:RESULT = new Operation(i, EnumTerminals.ID);:}
+          | TEXT:t {:RESULT = new Operation(t, EnumTerminals.TEXT);:}
+          | CHARACTER:c {:RESULT = new Operation(c, EnumTerminals.CHARACTER);:};
+
+aritmetic ::= expr:a PLUS expr:b {: RESULT = new Operation(a, EnumOperations.PLUS, b); :}
+            | expr:a MINUS expr:b {: RESULT = new Operation(a, EnumOperations.MINUS, b); :}
+            | expr:a TIMES expr:b {: RESULT = new Operation(a, EnumOperations.TIMES, b); :}
+            | expr:a DIVIDE expr:b {: RESULT = new Operation(a, EnumOperations.DIVIDE, b); :}
+            | INTEGER:i {: RESULT = new Operation(i, EnumTerminals.INTEGER); :}
+            | DECIMAL:d {: RESULT = new Operation(d, EnumTerminals.DECIMAL); :};
+
+logical ::= expr:a GREATER_THAN expr:b {: RESULT = new Operation(a, EnumOperations.GREATER_THAN, b); :}
+          | expr:a LESS_THAN expr:b {: RESULT = new Operation(a, EnumOperations.LESS_THAN, b); :}
+          | expr:a GREATER_EQUAL expr:b {: RESULT = new Operation(a, EnumOperations.GREATER_EQUAL, b); :}
+          | expr:a LESS_EQUAL expr:b {: RESULT = new Operation(a, EnumOperations.LESS_EQUAL, b); :}
+          | expr:a EQUAL_TO expr:b {: RESULT = new Operation(a, EnumOperations.EQUAL_TO, b);:}
+          | expr:a NOT_EQUAL_TO expr:b {: RESULT = new Operation(a, EnumOperations.NOT_EQUAL_TO, b);:}
+          | expr:a AND expr:b {: RESULT = new Operation(a, EnumOperations.AND, b); :}
+          | expr:a OR expr:b {: RESULT = new Operation(a, EnumOperations.OR, b); :}
+          | BOOLEAN:b {: RESULT = new Operation(b, EnumTerminals.BOOLEAN); :};
+
+unitary ::= MINUS expr:e {: RESULT = new Operation(e, EnumUnitaryOperations.MINUS); :}
+          | NOT expr:e {: RESULT = new Operation(e, EnumUnitaryOperations.NOT); :};

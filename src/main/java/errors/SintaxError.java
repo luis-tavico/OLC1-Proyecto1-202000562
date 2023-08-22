@@ -1,13 +1,13 @@
 package errors;
 
 public class SintaxError {
-    public String lexema;
-    public int linea;
-    public int columna;
+    public String lexeme;
+    public int line;
+    public int column;
     
-    public SintaxError(String lexema, int linea, int columna){
-        this.lexema = lexema;
-        this.linea = linea;
-        this.columna = columna;
+    public SintaxError(String lexeme, int line, int column){
+        this.lexeme = lexeme;
+        this.line = line;
+        this.column = column;
     }
 }

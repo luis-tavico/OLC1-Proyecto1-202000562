@@ -1,5 +1,5 @@
 package enums;
 
 public enum EnumTerminals {
-    IDENTIFICADOR, ENTERO, DECIMAL, CADENA, CARACTER, BOOLEANO;
+    ID, INTEGER, DECIMAL, TEXT, CHARACTER, BOOLEAN;
 }
