@@ -4,8 +4,8 @@ import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import analyzers.Lexical;
-import analyzers.Syntactic;
+import analyzersStatPy.Lexical;
+import analyzersStatPy.Syntactic;
 import enums.EnumTypes;
 import instructions.Statement;
 

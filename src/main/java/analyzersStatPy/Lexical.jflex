@@ -1,4 +1,4 @@
-package analyzers;
+package analyzersStatPy;
 
 import java_cup.runtime.*;
 import java.util.LinkedList;
@@ -43,6 +43,7 @@ ID = [a-zA-Z]+ | [a-zA-Z_][a-zA-Z0-9_]+
 "void"                  { return new Symbol(sym.VOID, yyline, (int)yychar, yytext()); }
 "main"                  { return new Symbol(sym.MAIN, yyline, (int)yychar, yytext()); }
 "if"                    { return new Symbol(sym.IF, yyline, (int)yychar, yytext()); }
+"else if"               { return new Symbol(sym.ELSEIF, yyline, (int)yychar, yytext()); }
 "else"                  { return new Symbol(sym.ELSE, yyline, (int)yychar, yytext()); }
 "switch"                { return new Symbol(sym.SWITCH, yyline, (int)yychar, yytext()); }
 "case"                  { return new Symbol(sym.CASE, yyline, (int)yychar, yytext()); }

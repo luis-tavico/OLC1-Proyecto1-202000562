@@ -1,4 +1,4 @@
-package analyzers;
+package analyzersStatPy;
 
 import java_cup.runtime.*;
 import java.util.LinkedList;
@@ -8,6 +8,12 @@ import instructions.Statement;
 import instructions.Operation;
 import instructions.Param;
 
+import instructions.If;
+import instructions.ElseIf;
+import instructions.Switch;
+import instructions.Case;
+import instructions.While;
+import instructions.DoWhile; 
 import instructions.Print;
 
 import enums.EnumOperations;
@@ -31,7 +37,7 @@ parser code {:
 
             :}
 
-terminal String VOID, MAIN, IF, ELSE, SWITCH, CASE, BREAK, DEFAULT, FOR, WHILE, DO, CONSOLE, WRITE;
+terminal String VOID, MAIN, IF, ELSEIF, ELSE, SWITCH, CASE, BREAK, DEFAULT, FOR, WHILE, DO, CONSOLE, WRITE;
 terminal String DECIMAL, INTEGER, TEXT, CHARACTER, BOOLEAN, ID;
 terminal String INT, DOUBLE, CHAR, BOOL, STRING;
 terminal String AND, OR, NOT; 
@@ -44,11 +50,15 @@ non terminal ini;
 non terminal LinkedList<Statement> statements;
 non terminal Statement statement;
 non terminal Operation expr;
+non terminal LinkedList<ElseIf> elseifs;
+non terminal LinkedList<Case> cases;
 
 non terminal Operation symbols;
 non terminal Operation aritmetic;
 non terminal Operation logical;
 non terminal Operation unitary;
+
+non terminal If if;
 
 non terminal Statement mainstatement;
 non terminal LinkedList<Statement> mainstatements;
@@ -71,8 +81,28 @@ mainstatement ::= statement:s {: RESULT = s; :};
 statements ::= statement:s statements:t  {: RESULT=t; RESULT.add(s); :}
              | statement:s {: RESULT = new LinkedList<Statement>(); RESULT.add(s); :};
 
-statement ::= CONSOLE PERIOD WRITE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS SEMI_COLON {: RESULT = new Print(e); :}
+statement ::= if:i {: RESULT=i; :}
+            | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {:RESULT = new Switch(e);:}
+            | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET cases:c RIGHT_CURLY_BRACKET {:RESULT = new Switch(e, c);:}
+            | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET cases:c DEFAULT COLON statements:s RIGHT_CURLY_BRACKET {: RESULT = new Switch(e, c, s); :}
+            | WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {:RESULT = new While(e, s);:}
+            | WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {:RESULT = new While(e);:}            
+            | DO LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS SEMI_COLON {: RESULT = new DoWhile(s, e); :}
+            | DO LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS SEMI_COLON {: RESULT = new DoWhile(e); :}
+            | CONSOLE PERIOD WRITE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS SEMI_COLON {: RESULT = new Print(e); :}
+            | error RIGHT_CURLY_BRACKET
             | error SEMI_COLON;
+
+if ::= IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {:RESULT = new If(e, s);:}
+     | IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET ELSE LEFT_CURLY_BRACKET statements:t RIGHT_CURLY_BRACKET {: RESULT = new If(e, s, t); :}
+     | IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET elseifs:l {: RESULT = new If(e, s, l, null); :}
+     | IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET elseifs:l ELSE LEFT_CURLY_BRACKET statements:t RIGHT_CURLY_BRACKET {: RESULT = new If(e, s, l, t); :};
+
+elseifs ::= elseifs:f ELSEIF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = f; RESULT.add(new ElseIf(e, s)); :}
+          | ELSEIF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new LinkedList<ElseIf>(); RESULT.add(new ElseIf(e, s)); :};
+
+cases ::= cases:c CASE INTEGER COLON statements:s {: RESULT = c; RESULT.add(new Case(s)); :}
+        | CASE INTEGER COLON statements:s {: RESULT = new LinkedList<Case>(); RESULT.add(new Case(s)); :};
 
 expr ::= symbols:s {:RESULT = s;:}
        | aritmetic:a {:RESULT = a;:}
