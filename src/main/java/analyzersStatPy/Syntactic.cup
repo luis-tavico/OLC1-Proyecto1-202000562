@@ -8,10 +8,13 @@ import instructions.Statement;
 import instructions.Operation;
 import instructions.Param;
 
+import instructions.Declaration;
+import instructions.Assignment;
 import instructions.If;
 import instructions.ElseIf;
 import instructions.Switch;
 import instructions.Case;
+import instructions.For;
 import instructions.While;
 import instructions.DoWhile; 
 import instructions.Print;
@@ -53,15 +56,18 @@ non terminal Operation expr;
 non terminal LinkedList<ElseIf> elseifs;
 non terminal LinkedList<Case> cases;
 
+non terminal If if;
+non terminal For for;
+
 non terminal Operation symbols;
 non terminal Operation aritmetic;
 non terminal Operation logical;
 non terminal Operation unitary;
 
-non terminal If if;
-
 non terminal Statement mainstatement;
 non terminal LinkedList<Statement> mainstatements;
+
+non terminal data_type;
 
 precedence left GREATER_THAN, LESS_THAN, GREATER_EQUAL, LESS_EQUAL, EQUAL_TO, NOT_EQUAL_TO;
 precedence left AND, OR;
@@ -81,10 +87,14 @@ mainstatement ::= statement:s {: RESULT = s; :};
 statements ::= statement:s statements:t  {: RESULT=t; RESULT.add(s); :}
              | statement:s {: RESULT = new LinkedList<Statement>(); RESULT.add(s); :};
 
-statement ::= if:i {: RESULT=i; :}
+statement ::= data_type ID:i SEMI_COLON {: RESULT = new Declaration(i); :}
+            | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Assignment(i, e); :}
+            | ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Assignment(i, e); :}
+            | if:i {: RESULT=i; :}
             | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {:RESULT = new Switch(e);:}
             | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET cases:c RIGHT_CURLY_BRACKET {:RESULT = new Switch(e, c);:}
             | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET cases:c DEFAULT COLON statements:s RIGHT_CURLY_BRACKET {: RESULT = new Switch(e, c, s); :}
+            | for:f {: RESULT=f; :}
             | WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {:RESULT = new While(e, s);:}
             | WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {:RESULT = new While(e);:}            
             | DO LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS SEMI_COLON {: RESULT = new DoWhile(s, e); :}
@@ -92,6 +102,12 @@ statement ::= if:i {: RESULT=i; :}
             | CONSOLE PERIOD WRITE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS SEMI_COLON {: RESULT = new Print(e); :}
             | error RIGHT_CURLY_BRACKET
             | error SEMI_COLON;
+
+data_type ::= INT
+            | DOUBLE
+            | CHAR
+            | STRING
+            | BOOL;
 
 if ::= IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {:RESULT = new If(e, s);:}
      | IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET ELSE LEFT_CURLY_BRACKET statements:t RIGHT_CURLY_BRACKET {: RESULT = new If(e, s, t); :}
@@ -103,6 +119,9 @@ elseifs ::= elseifs:f ELSEIF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURL
 
 cases ::= cases:c CASE INTEGER COLON statements:s {: RESULT = c; RESULT.add(new Case(s)); :}
         | CASE INTEGER COLON statements:s {: RESULT = new LinkedList<Case>(); RESULT.add(new Case(s)); :};
+
+for ::= FOR LEFT_PARENTHESIS INT ID:i EQUAL INTEGER:n SEMI_COLON expr:e SEMI_COLON ID INCREASE RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new For(i, n, e, s); :}
+      | FOR LEFT_PARENTHESIS INT ID:i EQUAL INTEGER:n SEMI_COLON expr:e SEMI_COLON ID INCREASE RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {: RESULT = new For(i, e); :};
 
 expr ::= symbols:s {:RESULT = s;:}
        | aritmetic:a {:RESULT = a;:}
