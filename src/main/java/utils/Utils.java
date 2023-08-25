@@ -19,7 +19,7 @@ public class Utils {
         } catch (Exception ex) {
             throw ex;
         }
-        return new AnalyzerResult(parser.AST, scanner.lexicalErrors, parser.errors);
+        return new AnalyzerResult(parser.AST, scanner.lexicalErrors, parser.errors, scanner.tokens);
     }
 
     public static String translatePython(LinkedList<Statement> ast) {
@@ -45,14 +45,11 @@ public class Utils {
         str.append("def main():\n");
         for (Statement statement : mainStatements) {
             str.append(addTabs(statement.translatePython())).append("\n");
+            System.out.println(statement.translatePython());
         }
         str.append("if __name__ == '__main__':\n");
         str.append("\tmain()");
         return str.toString();
-    }
-
-    public static String generateGuid() {
-        return UUID.randomUUID().toString().replaceAll("-", "").replaceFirst("[0-9]+", "");
     }
 
     public static EnumTypes checkTypes(String type) {

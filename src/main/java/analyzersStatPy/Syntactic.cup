@@ -8,8 +8,8 @@ import instructions.Statement;
 import instructions.Operation;
 import instructions.Param;
 
-import instructions.Declaration;
-import instructions.Assignment;
+import instructions.Function;
+import instructions.Declaration_Assignment;
 import instructions.If;
 import instructions.ElseIf;
 import instructions.Switch;
@@ -18,6 +18,7 @@ import instructions.For;
 import instructions.While;
 import instructions.DoWhile; 
 import instructions.Print;
+import instructions.Return;
 
 import enums.EnumOperations;
 import enums.EnumTerminals;
@@ -40,29 +41,35 @@ parser code {:
 
             :}
 
-terminal String VOID, MAIN, IF, ELSEIF, ELSE, SWITCH, CASE, BREAK, DEFAULT, FOR, WHILE, DO, CONSOLE, WRITE;
+terminal String VOID, MAIN, IF, ELSEIF, ELSE, SWITCH, CASE, DEFAULT, FOR, WHILE, DO, CONSOLE, WRITE, CONTINUE, BREAK, RETURN;
 terminal String DECIMAL, INTEGER, TEXT, CHARACTER, BOOLEAN, ID;
 terminal String INT, DOUBLE, CHAR, BOOL, STRING;
 terminal String AND, OR, NOT; 
 terminal String PLUS, MINUS, TIMES, DIVIDE;
 terminal String LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_CURLY_BRACKET, RIGHT_CURLY_BRACKET, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET,
-                LESS_THAN, GREATER_THAN, LESS_EQUAL, GREATER_EQUAL, EQUAL, EQUAL_TO, NOT_EQUAL_TO, PERIOD, SEMI_COLON, COLON, INCREASE, DECREASE;
+                LESS_THAN, GREATER_THAN, LESS_EQUAL, GREATER_EQUAL, EQUAL, EQUAL_TO, NOT_EQUAL_TO, PERIOD, COMMA, SEMI_COLON, COLON, INCREASE, DECREASE, DOLLAR;
 
 non terminal ini;
 
 non terminal LinkedList<Statement> statements;
 non terminal Statement statement;
 non terminal Operation expr;
+non terminal LinkedList<Operation> args_list;
 non terminal LinkedList<ElseIf> elseifs;
 non terminal LinkedList<Case> cases;
+
+non terminal Operation aritmetic;
+non terminal Operation logical;
+non terminal Operation symbols;
+non terminal Operation unitary;
 
 non terminal If if;
 non terminal For for;
 
-non terminal Operation symbols;
-non terminal Operation aritmetic;
-non terminal Operation logical;
-non terminal Operation unitary;
+non terminal Statement funcstatement;
+non terminal LinkedList<Statement> funcstatements;
+
+non terminal Statement function;
 
 non terminal Statement mainstatement;
 non terminal LinkedList<Statement> mainstatements;
@@ -82,14 +89,17 @@ ini ::= VOID MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS LEFT_CURLY_BRACKET mainstat
 mainstatements ::= mainstatement:s mainstatements:t  {: RESULT=t; RESULT.add(s); :}
                  | mainstatement:s {: RESULT = new LinkedList<Statement>(); RESULT.add(s); :};
 
-mainstatement ::= statement:s {: RESULT = s; :};
+mainstatement ::= statement:s {: RESULT = s; :}
+                | function:f {: RESULT = f; :};
 
 statements ::= statement:s statements:t  {: RESULT=t; RESULT.add(s); :}
              | statement:s {: RESULT = new LinkedList<Statement>(); RESULT.add(s); :};
 
-statement ::= data_type ID:i SEMI_COLON {: RESULT = new Declaration(i); :}
-            | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Assignment(i, e); :}
-            | ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Assignment(i, e); :}
+statement ::= data_type ID:i SEMI_COLON {: RESULT = new Declaration_Assignment(i); :}
+            | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}
+            | data_type LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET ID EQUAL LEFT_CURLY_BRACKET args_list:a RIGHT_CURLY_BRACKET SEMI_COLON
+            | data_type ID EQUAL DOLLAR LEFT_CURLY_BRACKET args_list:a RIGHT_CURLY_BRACKET SEMI_COLON
+            | ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}
             | if:i {: RESULT=i; :}
             | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {:RESULT = new Switch(e);:}
             | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET cases:c RIGHT_CURLY_BRACKET {:RESULT = new Switch(e, c);:}
@@ -103,13 +113,24 @@ statement ::= data_type ID:i SEMI_COLON {: RESULT = new Declaration(i); :}
             | error RIGHT_CURLY_BRACKET
             | error SEMI_COLON;
 
-data_type ::= INT
-            | DOUBLE
-            | CHAR
-            | STRING
-            | BOOL;
+data_type ::= INT:i {: RESULT = i; :}
+            | DOUBLE:d {: RESULT = d; :}
+            | CHAR:c {: RESULT = c; :}
+            | STRING:s {: RESULT = s; :}
+            | BOOL:b {: RESULT = b; :};
 
-if ::= IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {:RESULT = new If(e, s);:}
+args_list ::= args_list:a COMMA expr:e {:RESULT = a; RESULT.add(e); :}
+            | expr:e {: RESULT = new LinkedList<Operation>(); RESULT.add(e); :};
+
+function ::= VOID ID:i LEFT_PARENTHESIS RIGHT_PARENTHESIS LEFT_CURLY_BRACKET funcstatements:s RIGHT_CURLY_BRACKET {: RESULT = new Function(i, s); :};
+
+funcstatements ::= funcstatement:f funcstatements:s {:RESULT=s; RESULT.add(f);:}
+                 | funcstatement:f {:RESULT = new LinkedList<Statement>(); RESULT.add(f);:};
+
+funcstatement ::= statement:s {:RESULT = s;:}
+                | RETURN expr:e SEMI_COLON {:RESULT = new Return(e);:};
+
+if ::= IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new If(e, s); :}
      | IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET ELSE LEFT_CURLY_BRACKET statements:t RIGHT_CURLY_BRACKET {: RESULT = new If(e, s, t); :}
      | IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET elseifs:l {: RESULT = new If(e, s, l, null); :}
      | IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET elseifs:l ELSE LEFT_CURLY_BRACKET statements:t RIGHT_CURLY_BRACKET {: RESULT = new If(e, s, l, t); :};
@@ -123,10 +144,10 @@ cases ::= cases:c CASE INTEGER COLON statements:s {: RESULT = c; RESULT.add(new 
 for ::= FOR LEFT_PARENTHESIS INT ID:i EQUAL INTEGER:n SEMI_COLON expr:e SEMI_COLON ID INCREASE RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new For(i, n, e, s); :}
       | FOR LEFT_PARENTHESIS INT ID:i EQUAL INTEGER:n SEMI_COLON expr:e SEMI_COLON ID INCREASE RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {: RESULT = new For(i, e); :};
 
-expr ::= symbols:s {:RESULT = s;:}
-       | aritmetic:a {:RESULT = a;:}
-       | logical:l {:RESULT = l;:}
-       | unitary:u {:RESULT = u;:}
+expr ::= symbols:s {: RESULT = s; :}
+       | aritmetic:a {: RESULT = a; :}
+       | logical:l {: RESULT = l; :}
+       | unitary:u {: RESULT = u; :}
        | LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS {: RESULT = new Operation(e); :};
 
 symbols ::= ID:i {:RESULT = new Operation(i, EnumTerminals.ID);:}

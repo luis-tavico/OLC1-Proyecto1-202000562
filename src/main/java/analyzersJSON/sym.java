@@ -8,13 +8,10 @@ package analyzersJSON;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int DECIMAL = 9;
-  public static final int INTEGER = 10;
+  public static final int DECIMAL = 8;
   public static final int LEFT_CURLY_BRACKET = 2;
   public static final int COLON = 7;
-  public static final int BOOLEAN = 12;
-  public static final int NULL = 8;
-  public static final int STRING = 11;
+  public static final int STRING = 9;
   public static final int EOF = 0;
   public static final int error = 1;
   public static final int COMMA = 6;
@@ -30,11 +27,8 @@ public class sym {
   "RIGHT_SQUARE_BRACKET",
   "COMMA",
   "COLON",
-  "NULL",
   "DECIMAL",
-  "INTEGER",
-  "STRING",
-  "BOOLEAN"
+  "STRING"
   };
 }
 

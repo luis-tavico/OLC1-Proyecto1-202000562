@@ -5,20 +5,30 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import utils.Utils;
 
-public class Declaration implements Statement {
+public class Declaration_Assignment implements Statement {
 
-    LinkedList<String> name_list;
+    String varId;
     EnumTypes type;
     Operation expr;
 
-    public Declaration(LinkedList<String> name_list, String type, Operation expr) {
-        this.name_list = name_list;
-        this.type = Utils.checkTypes(type);
+    
+    public Declaration_Assignment(String varId) {
+        this.varId = varId;
+    }
+
+    public Declaration_Assignment(String varId, Operation expr) {
+        this.varId = varId;
         this.expr = expr;
     }
 
     @Override
     public String translatePython() {
+        StringBuilder str = new StringBuilder();
+
+        str.append(varId).append(" = ").append(expr.translatePython()).append("\n");
+
+        return str.toString();
+        /*
         StringBuilder str = new StringBuilder();
 
         Iterator<String> iterator = name_list.iterator();
@@ -44,7 +54,7 @@ public class Declaration implements Statement {
         }
 
         return str.toString();
+         */
 
     }
-
 }

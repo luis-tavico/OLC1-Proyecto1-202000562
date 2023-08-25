@@ -32,12 +32,9 @@ MULTILINE_COMMENT = "/*""/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/"
 SIMPLE_COMMENT = "//" .*
 
 DECIMAL = [0-9]+ "." [0-9]+
-INTEGER = [0-9]+
 STRING = \" ([^\"] | "\\\"")+ \"
-BOOLEAN = true | false
 
 %%
-"null"                  { return new Symbol(sym.NULL, yyline, (int)yychar, yytext()); }
 
 "{"                     { return new Symbol(sym.LEFT_CURLY_BRACKET, yyline, (int)yychar, yytext()); }
 "}"                     { return new Symbol(sym.RIGHT_CURLY_BRACKET, yyline, (int)yychar, yytext()); }
@@ -53,9 +50,7 @@ BOOLEAN = true | false
 {SIMPLE_COMMENT}        { System.out.println(yytext()); }
 
 {DECIMAL}               { return new Symbol(sym.DECIMAL, yyline, (int)yychar, yytext()); }
-{INTEGER}               { return new Symbol(sym.INTEGER, yyline, (int)yychar, yytext()); }
 {STRING}                { return new Symbol(sym.STRING, yyline, (int)yychar, yytext()); }
-{BOOLEAN}               { return new Symbol(sym.BOOLEAN, yyline, (int)yychar, yytext()); }
 
 . {
     lexicalErrors.add(new LexicalError(yytext(), yyline, (int)yychar));
