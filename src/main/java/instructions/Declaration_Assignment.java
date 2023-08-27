@@ -11,9 +11,20 @@ public class Declaration_Assignment implements Statement {
     EnumTypes type;
     Operation expr;
 
-    
+    public Declaration_Assignment(String varId, Operation expr) {
+        this.varId = varId;
+        this.expr = expr;
+    }
+
     public Declaration_Assignment(String varId) {
         this.varId = varId;
+    }
+
+    /*
+    public Declaration_Assignment(String type, String varId, Operation expr) {
+        this.type = Utils.checkTypes(type);
+        this.varId = varId;
+        this.expr = expr;
     }
 
     public Declaration_Assignment(String varId, Operation expr) {
@@ -21,6 +32,11 @@ public class Declaration_Assignment implements Statement {
         this.expr = expr;
     }
 
+    public Declaration_Assignment(String type, String varId) {
+        this.type = Utils.checkTypes(type);
+        this.varId = varId;
+    }
+     */
     @Override
     public String translatePython() {
         StringBuilder str = new StringBuilder();

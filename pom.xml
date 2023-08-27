@@ -16,6 +16,16 @@
             <artifactId>cup</artifactId>
             <version>11</version>
         </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>PDF</groupId>
+            <artifactId>iText</artifactId>
+            <version>5.4.0</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

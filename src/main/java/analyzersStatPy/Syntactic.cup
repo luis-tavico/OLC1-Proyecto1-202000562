@@ -4,6 +4,7 @@ import java_cup.runtime.*;
 import java.util.LinkedList;
 import errors.SintaxError;
 
+import instructions.Variable;
 import instructions.Statement;
 import instructions.Operation;
 import instructions.Param;
@@ -28,6 +29,7 @@ parser code {:
 
     public LinkedList<Statement> AST;
     public LinkedList<SintaxError> errors = new LinkedList<>();
+    public LinkedList<Variable> variables = new LinkedList<>();
 
     public void syntax_error(Symbol s){
         if (s.value != null)
@@ -94,10 +96,8 @@ mainstatement ::= statement:s {: RESULT = s; :}
 statements ::= statement:s statements:t  {: RESULT=t; RESULT.add(s); :}
              | statement:s {: RESULT = new LinkedList<Statement>(); RESULT.add(s); :};
 
-statement ::= data_type ID:i SEMI_COLON {: RESULT = new Declaration_Assignment(i); :}
-            | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}
-            | data_type LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET ID EQUAL LEFT_CURLY_BRACKET args_list:a RIGHT_CURLY_BRACKET SEMI_COLON
-            | data_type ID EQUAL DOLLAR LEFT_CURLY_BRACKET args_list:a RIGHT_CURLY_BRACKET SEMI_COLON
+statement ::= data_type:d ID:i SEMI_COLON {: RESULT = new Declaration_Assignment(i); :}
+            | data_type:d ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}
             | ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}
             | if:i {: RESULT=i; :}
             | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {:RESULT = new Switch(e);:}
@@ -112,23 +112,25 @@ statement ::= data_type ID:i SEMI_COLON {: RESULT = new Declaration_Assignment(i
             | error RIGHT_CURLY_BRACKET
             | error SEMI_COLON;
 
-data_type ::= INT:i {: RESULT = i; :}
-            | DOUBLE:d {: RESULT = d; :}
-            | CHAR:c {: RESULT = c; :}
-            | STRING:s {: RESULT = s; :}
-            | BOOL:b {: RESULT = b; :};
+data_type ::= INT
+            | DOUBLE
+            | CHAR
+            | STRING
+            | BOOL;
 
 args_list ::= args_list:a COMMA expr:e {:RESULT = a; RESULT.add(e); :}
             | expr:e {: RESULT = new LinkedList<Operation>(); RESULT.add(e); :};
 
-function ::= VOID ID:i LEFT_PARENTHESIS RIGHT_PARENTHESIS LEFT_CURLY_BRACKET funcstatements:f RIGHT_CURLY_BRACKET {: RESULT = new Function(i, f); :};
+function ::= VOID ID:i LEFT_PARENTHESIS RIGHT_PARENTHESIS LEFT_CURLY_BRACKET funcstatements:f RIGHT_CURLY_BRACKET {: RESULT = new Function(i, f, variables); :};
 
 funcstatements ::= funcstatement:f funcstatements:s  {: RESULT = s; RESULT.add(f); :}
                  | funcstatement:f {: RESULT = new LinkedList<Declaration_Assignment>(); RESULT.add(f); :};
 
 funcstatement ::= data_type ID:i SEMI_COLON {: RESULT = new Declaration_Assignment(i); :}
-                | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}
-                | ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :};
+                | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); variables.add(new Variable(i, e)); :}
+                | ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}
+                | data_type LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET ID EQUAL LEFT_CURLY_BRACKET args_list:a RIGHT_CURLY_BRACKET SEMI_COLON
+                | data_type ID EQUAL DOLLAR LEFT_CURLY_BRACKET args_list:a RIGHT_CURLY_BRACKET SEMI_COLON;
 
 if ::= IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new If(e, s); :}
      | IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET ELSE LEFT_CURLY_BRACKET statements:t RIGHT_CURLY_BRACKET {: RESULT = new If(e, s, t); :}

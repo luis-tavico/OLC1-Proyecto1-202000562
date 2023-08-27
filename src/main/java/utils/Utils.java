@@ -45,7 +45,6 @@ public class Utils {
         str.append("def main():\n");
         for (Statement statement : mainStatements) {
             str.append(addTabs(statement.translatePython())).append("\n");
-            System.out.println(statement.translatePython());
         }
         str.append("if __name__ == '__main__':\n");
         str.append("\tmain()");
