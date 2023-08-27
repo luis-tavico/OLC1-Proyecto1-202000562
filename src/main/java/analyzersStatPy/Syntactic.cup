@@ -30,6 +30,13 @@ parser code {:
     public LinkedList<Statement> AST;
     public LinkedList<SintaxError> errors = new LinkedList<>();
     public LinkedList<Variable> variables = new LinkedList<>();
+    public LinkedList<Variable> variables_json = new LinkedList<>();
+    String path = "";
+
+    public void setValues (LinkedList<Variable> variables_json, String path) {
+        variables_json = variables_json;
+        path = path;
+    }
 
     public void syntax_error(Symbol s){
         if (s.value != null)
@@ -121,13 +128,13 @@ data_type ::= INT
 args_list ::= args_list:a COMMA expr:e {:RESULT = a; RESULT.add(e); :}
             | expr:e {: RESULT = new LinkedList<Operation>(); RESULT.add(e); :};
 
-function ::= VOID ID:i LEFT_PARENTHESIS RIGHT_PARENTHESIS LEFT_CURLY_BRACKET funcstatements:f RIGHT_CURLY_BRACKET {: RESULT = new Function(i, f, variables); :};
+function ::= VOID ID:i LEFT_PARENTHESIS RIGHT_PARENTHESIS LEFT_CURLY_BRACKET funcstatements:f RIGHT_CURLY_BRACKET {: RESULT = new Function(i, f, variables, variables_json); :};
 
 funcstatements ::= funcstatement:f funcstatements:s  {: RESULT = s; RESULT.add(f); :}
                  | funcstatement:f {: RESULT = new LinkedList<Declaration_Assignment>(); RESULT.add(f); :};
 
 funcstatement ::= data_type ID:i SEMI_COLON {: RESULT = new Declaration_Assignment(i); :}
-                | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); variables.add(new Variable(i, e)); :}
+                | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); variables.add(new Variable(i, e, ""));:}
                 | ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}
                 | data_type LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET ID EQUAL LEFT_CURLY_BRACKET args_list:a RIGHT_CURLY_BRACKET SEMI_COLON
                 | data_type ID EQUAL DOLLAR LEFT_CURLY_BRACKET args_list:a RIGHT_CURLY_BRACKET SEMI_COLON;

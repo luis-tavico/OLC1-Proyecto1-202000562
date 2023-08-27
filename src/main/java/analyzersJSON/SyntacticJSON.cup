@@ -3,11 +3,19 @@ package analyzersJSON;
 import java_cup.runtime.*;
 import java.util.LinkedList;
 import errors.SintaxError;
+import instructions.Variable;
 
 
 parser code {:
 
     public LinkedList<SintaxError> errors = new LinkedList<>();
+    public LinkedList<Variable> variables_json = new LinkedList<>();
+    String path = "";
+
+    public void setValues (LinkedList<Variable> variables_json, String path) {
+        variables_json = variables_json;
+        path = path;
+    }
 
     public void syntax_error(Symbol s){
         if (s.value != null)
@@ -26,27 +34,28 @@ terminal String DECIMAL, STRING;
 
 non terminal success, valid_json, value, object, member_list, pair, array, value_list;
 
-success ::= valid_json  {: System.out.println("\nParsing completed successfully."); :};
+start with success;
+
+success ::= valid_json;
 
 valid_json ::= array 
              | object;
 
-object ::= LEFT_CURLY_BRACKET {: System.out.println("\nParsing object... "); :} RIGHT_CURLY_BRACKET {: System.out.println("Empty object parsed."); :} | 
-           LEFT_CURLY_BRACKET {: System.out.println("\nParsing object... "); :} member_list RIGHT_CURLY_BRACKET {: System.out.println("Object parsed."); :}; 
+object ::= LEFT_CURLY_BRACKET member_list RIGHT_CURLY_BRACKET
+         | LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET; 
 
 member_list ::= member_list COMMA pair 
               | pair;
 
-pair ::= STRING:k {: System.out.print("Key " + k + " : "); :} COLON value;
+pair ::= STRING:k COLON value:v {: variables_json.add(new Variable(k, String.valueOf(v), path)); :};
 
-
-array ::= LEFT_SQUARE_BRACKET {: System.out.println("\nParsing array... "); :} RIGHT_SQUARE_BRACKET {: System.out.println("Empty array parsed."); :} 
-        | LEFT_SQUARE_BRACKET {: System.out.println("\nParsing array... "); :} value_list RIGHT_SQUARE_BRACKET {: System.out.println("Array parsed."); :};
+array ::= LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET
+        | LEFT_SQUARE_BRACKET value_list RIGHT_SQUARE_BRACKET;
 
 value_list ::= value_list COMMA value 
              | value;
 
-value ::= STRING  :s {: System.out.print(s + " (string)\n"); :}
-        | DECIMAL :d {: System.out.print(d.toString() + " (number in scientific notation)\n"); :}
+value ::= STRING:s {: RESULT = s.toString(); :}
+        | DECIMAL:d {: RESULT = d.toString(); :}
         | array
         | object;

@@ -3,23 +3,43 @@ package utils;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 import analyzersStatPy.Lexical;
 import analyzersStatPy.Syntactic;
+import analyzersJSON.LexicalJSON;
+import analyzersJSON.SyntacticJSON;
 import enums.EnumTypes;
 import instructions.Statement;
+import instructions.Variable;
 
 public class Utils {
 
-    public static AnalyzerResult loadFile(String input) throws Exception {
+    public static AnalyzerResult analyzerFileStatPy(String input, LinkedList<Variable> variables_json, String path) throws Exception {
         Lexical scanner = new Lexical(new StringReader(input));
         Syntactic parser = new Syntactic(scanner);
+        parser.setValues(variables_json, path);
         try {
             parser.parse();
         } catch (Exception ex) {
             throw ex;
         }
-        return new AnalyzerResult(parser.AST, scanner.lexicalErrors, parser.errors, scanner.tokens);
+        return new AnalyzerResult(parser.AST, scanner.lexicalErrors, parser.errors, scanner.tokens, parser.variables_json);
+    }
+
+    public static AnalyzerResult analyzerFileJSON(String input, String path) throws Exception {
+        LinkedList<Variable> variables_json = new LinkedList<>();
+        LexicalJSON scanner = new LexicalJSON(new StringReader(input));
+        SyntacticJSON parser = new SyntacticJSON(scanner);
+        parser.setValues(variables_json, path);
+        try {
+            parser.parse();
+        } catch (Exception ex) {
+            throw ex;
+        }
+        for (Variable variable : parser.variables_json) {
+            //variables_json.add(variable);
+            System.out.println(variable.getName());
+        }
+        return new AnalyzerResult(scanner.lexicalErrors, parser.errors, scanner.tokens, parser.variables_json);
     }
 
     public static String translatePython(LinkedList<Statement> ast) {

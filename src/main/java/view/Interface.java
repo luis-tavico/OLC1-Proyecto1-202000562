@@ -1,19 +1,16 @@
 package view;
 
-import analyzersJSON.Lexical;
-import analyzersJSON.Syntactic;
+import analyzersJSON.LexicalJSON;
+import analyzersJSON.SyntacticJSON;
 import javax.swing.*;
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.BadLocationException;
 import java.util.LinkedList;
 import errors.LexicalError;
 import errors.SintaxError;
 import instructions.Statement;
+import instructions.Variable;
 import java.awt.Desktop;
-import java.net.URISyntaxException;
 import tokens.Tokens;
 import utils.Utils;
 import utils.AnalyzerResult;
@@ -28,6 +25,8 @@ public class Interface extends javax.swing.JFrame {
     LinkedList<LexicalError> lexErrorsJSON;
     LinkedList<SintaxError> sintaxErrorsJSON;
     LinkedList<Tokens> tokensStatPy;
+    LinkedList<Tokens> tokensJSON;
+    LinkedList<Variable> variables_json;
     int line = 1;
     int column = 1;
     String currentAnalyzer = "StatPy";
@@ -386,7 +385,7 @@ public class Interface extends javax.swing.JFrame {
         //Codigo
         if (this.currentAnalyzer.equals("StatPy")) {
             try {
-                AnalyzerResult result = Utils.loadFile(content);
+                AnalyzerResult result = Utils.analyzerFileStatPy(content, variables_json, "");
                 this.ast = result.ast;
                 this.lexErrorsStatPy = result.lexErrors;
                 this.tokensStatPy = result.tokens;
@@ -399,7 +398,7 @@ public class Interface extends javax.swing.JFrame {
                     String content_html_errors = lexicalErrorsReport.generateErrorsReport(lexErrorsStatPy);
 
                     try {
-                        FileWriter writer = new FileWriter("./src/main/java/reports/errores_lexicos.html");
+                        FileWriter writer = new FileWriter("./src/main/java/reports/erroresStatPy.html");
                         writer.write(content_html_errors);
                         writer.close();
                     } catch (IOException e) {
@@ -410,7 +409,7 @@ public class Interface extends javax.swing.JFrame {
                     String content_html_tokens = all_tokens.generateTokenReport(tokensStatPy);
 
                     try {
-                        FileWriter writer = new FileWriter("./src/main/java/reports/tokens.html");
+                        FileWriter writer = new FileWriter("./src/main/java/reports/tokensStatPy.html");
                         writer.write(content_html_tokens);
                         writer.close();
                     } catch (IOException e) {
@@ -430,12 +429,54 @@ public class Interface extends javax.swing.JFrame {
 
         } else if (this.currentAnalyzer.equals("JSON")) {
             try {
-                Lexical scanner = new Lexical(new java.io.StringReader(content));
-                Syntactic parser = new Syntactic(scanner);
-                parser.parse();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+                AnalyzerResult result = Utils.analyzerFileJSON(content, "");
+                this.ast = result.ast;
+                this.lexErrorsJSON = result.lexErrors;
+                this.tokensJSON = result.tokens;
+                this.sintaxErrorsJSON = result.sintaxErrors;
+
+                //System.out.println(result.variables_json);
+                
+                for (Variable variable : result.variables_json) {
+                    //variables_json.add(variable);
+                    System.out.println(variable);
+                }
+                
+
+                if (!lexErrorsJSON.isEmpty() || !sintaxErrorsJSON.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Se han encontrado errores en la entrada", "Error", JOptionPane.WARNING_MESSAGE);
+
+                    ErrorsReport lexicalErrorsReport = new ErrorsReport();
+                    String content_html_errors = lexicalErrorsReport.generateErrorsReport(lexErrorsJSON);
+
+                    try {
+                        FileWriter writer = new FileWriter("./src/main/java/reports/erroresJSON.html");
+                        writer.write(content_html_errors);
+                        writer.close();
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    TokensReport all_tokens = new TokensReport();
+                    String content_html_tokens = all_tokens.generateTokenReport(tokensJSON);
+
+                    try {
+                        FileWriter writer = new FileWriter("./src/main/java/reports/tokensJSON.html");
+                        writer.write(content_html_tokens);
+                        writer.close();
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                } else {
+
+                    JOptionPane.showMessageDialog(this, "No se ha ejecutado el archivo", "Error", JOptionPane.WARNING_MESSAGE);
+
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
             }
+
         }
     }//GEN-LAST:event_btnRunMousePressed
 
@@ -484,7 +525,23 @@ public class Interface extends javax.swing.JFrame {
 
     private void btnTokensReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTokensReportActionPerformed
         try {
-            File fileHTML = new File("src/main/java/reports/tokens.html");
+            File fileHTML = new File("src/main/java/reports/tokensStatPy.html");
+
+            if (fileHTML.exists()) {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(fileHTML.toURI());
+                } else {
+                    JOptionPane.showMessageDialog(this, "La funcionalidad de navegación no es compatible.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "¡Error el archivo no existe!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            File fileHTML = new File("src/main/java/reports/tokensJSON.html");
 
             if (fileHTML.exists()) {
                 Desktop desktop = Desktop.getDesktop();
@@ -503,7 +560,23 @@ public class Interface extends javax.swing.JFrame {
 
     private void btnErrorsReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnErrorsReportActionPerformed
         try {
-            File fileHTML = new File("src/main/java/reports/errores_lexicos.html");
+            File fileHTML = new File("src/main/java/reports/erroresStatPy.html");
+
+            if (fileHTML.exists()) {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(fileHTML.toURI());
+                } else {
+                    JOptionPane.showMessageDialog(this, "La funcionalidad de navegación no es compatible.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "¡Error el archivo no existe!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            File fileHTML = new File("src/main/java/reports/erroresJSON.html");
 
             if (fileHTML.exists()) {
                 Desktop desktop = Desktop.getDesktop();

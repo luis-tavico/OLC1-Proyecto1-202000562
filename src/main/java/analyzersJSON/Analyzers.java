@@ -9,9 +9,9 @@ public class Analyzers {
     private static void generateCompiler() {
         try {
             String path = "src/main/java/analyzersJSON/";
-            String opcFlex[] = {path + "Lexical.jflex", "-d", path};
+            String opcFlex[] = {path + "LexicalJSON.jflex", "-d", path};
             jflex.Main.generate(opcFlex);
-            String opcCUP[] = {"-destdir", path, "-parser", "Syntactic", path + "Syntactic.cup"};
+            String opcCUP[] = {"-destdir", path, "-parser", "SyntacticJSON", path + "SyntacticJSON.cup"};
             java_cup.Main.main(opcCUP);
         } catch (Exception e) {
             e.printStackTrace();

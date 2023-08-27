@@ -10,11 +10,13 @@ public class Function implements Statement {
     String funcId;
     LinkedList<Declaration_Assignment> decla_assigs;
     LinkedList<Variable> variables;
+    LinkedList<Variable> variables_json;
 
-    public Function(String funcId, LinkedList<Declaration_Assignment> decla_assigs, LinkedList<Variable> variables) {
+    public Function(String funcId, LinkedList<Declaration_Assignment> decla_assigs, LinkedList<Variable> variables, LinkedList<Variable> variables_json) {
         this.funcId = funcId;
         this.decla_assigs = decla_assigs;
         this.variables = variables;
+        this.variables_json = variables_json;
     }
 
     @Override
@@ -35,7 +37,13 @@ public class Function implements Statement {
                 if (decla_assig != null) {
                     if (decla_assig.varId.equalsIgnoreCase("titulo")) {
                         if (decla_assig.expr.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
-                            System.out.println("entro en titulo");
+                            for (Variable variable : variables) {
+                                if (variable != null) {
+                                    if (decla_assig.expr.translatePython().equals(variable.variable_name)) {
+                                        title = variable.variable_value;
+                                    }
+                                }
+                            }
                         } else {
                             title = decla_assig.expr.translatePython();
                         }
@@ -54,6 +62,13 @@ public class Function implements Statement {
                     }
                 }
             }
+            
+            for (Variable variable : variables_json) {
+                if (variable != null) {
+                    System.out.println(variable.variable_name + ", " + variable.variable_value);
+                }
+            }
+            
             BarChart barChart = new BarChart();
             double valores[] = {75.0, 61.0, 70.0, 50.0, 63.0};
             String nombres[] = {"Juan", "Diana", "Pedro", "Sofia", "Roberto"};

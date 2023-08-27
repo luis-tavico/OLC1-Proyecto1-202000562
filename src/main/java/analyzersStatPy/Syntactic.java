@@ -555,6 +555,13 @@ public class Syntactic extends java_cup.runtime.lr_parser {
     public LinkedList<Statement> AST;
     public LinkedList<SintaxError> errors = new LinkedList<>();
     public LinkedList<Variable> variables = new LinkedList<>();
+    public LinkedList<Variable> variables_json = new LinkedList<>();
+    String path = "";
+
+    public void setValues (LinkedList<Variable> variables_json, String path) {
+        variables_json = variables_json;
+        path = path;
+    }
 
     public void syntax_error(Symbol s){
         if (s.value != null)
@@ -979,7 +986,7 @@ class CUP$Syntactic$actions {
 		int fleft = ((java_cup.runtime.Symbol)CUP$Syntactic$stack.elementAt(CUP$Syntactic$top-1)).left;
 		int fright = ((java_cup.runtime.Symbol)CUP$Syntactic$stack.elementAt(CUP$Syntactic$top-1)).right;
 		LinkedList<Declaration_Assignment> f = (LinkedList<Declaration_Assignment>)((java_cup.runtime.Symbol) CUP$Syntactic$stack.elementAt(CUP$Syntactic$top-1)).value;
-		 RESULT = new Function(i, f, variables); 
+		 RESULT = new Function(i, f, variables, variables_json); 
               CUP$Syntactic$result = parser.getSymbolFactory().newSymbol("function",13, ((java_cup.runtime.Symbol)CUP$Syntactic$stack.elementAt(CUP$Syntactic$top-6)), ((java_cup.runtime.Symbol)CUP$Syntactic$stack.peek()), RESULT);
             }
           return CUP$Syntactic$result;
@@ -1033,7 +1040,7 @@ class CUP$Syntactic$actions {
 		int eleft = ((java_cup.runtime.Symbol)CUP$Syntactic$stack.elementAt(CUP$Syntactic$top-1)).left;
 		int eright = ((java_cup.runtime.Symbol)CUP$Syntactic$stack.elementAt(CUP$Syntactic$top-1)).right;
 		Operation e = (Operation)((java_cup.runtime.Symbol) CUP$Syntactic$stack.elementAt(CUP$Syntactic$top-1)).value;
-		 RESULT = new Declaration_Assignment(i, e); variables.add(new Variable(i, e)); 
+		 RESULT = new Declaration_Assignment(i, e); variables.add(new Variable(i, e, ""));
               CUP$Syntactic$result = parser.getSymbolFactory().newSymbol("funcstatement",15, ((java_cup.runtime.Symbol)CUP$Syntactic$stack.elementAt(CUP$Syntactic$top-4)), ((java_cup.runtime.Symbol)CUP$Syntactic$stack.peek()), RESULT);
             }
           return CUP$Syntactic$result;
