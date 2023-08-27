@@ -126,11 +126,11 @@ public class SyntacticJSON extends java_cup.runtime.lr_parser {
 
     public LinkedList<SintaxError> errors = new LinkedList<>();
     public LinkedList<Variable> variables_json = new LinkedList<>();
-    String path = "";
+    public String file_path = "";
 
     public void setValues (LinkedList<Variable> variables_json, String path) {
         variables_json = variables_json;
-        path = path;
+        file_path = path;
     }
 
     public void syntax_error(Symbol s){
@@ -256,7 +256,7 @@ class CUP$SyntacticJSON$actions {
 		int vleft = ((java_cup.runtime.Symbol)CUP$SyntacticJSON$stack.peek()).left;
 		int vright = ((java_cup.runtime.Symbol)CUP$SyntacticJSON$stack.peek()).right;
 		Object v = (Object)((java_cup.runtime.Symbol) CUP$SyntacticJSON$stack.peek()).value;
-		 variables_json.add(new Variable(k, String.valueOf(v), path)); 
+		 variables_json.add(new Variable(k, String.valueOf(v), file_path)); 
               CUP$SyntacticJSON$result = parser.getSymbolFactory().newSymbol("pair",5, ((java_cup.runtime.Symbol)CUP$SyntacticJSON$stack.elementAt(CUP$SyntacticJSON$top-2)), ((java_cup.runtime.Symbol)CUP$SyntacticJSON$stack.peek()), RESULT);
             }
           return CUP$SyntacticJSON$result;

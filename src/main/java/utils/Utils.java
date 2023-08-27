@@ -13,10 +13,10 @@ import instructions.Variable;
 
 public class Utils {
 
-    public static AnalyzerResult analyzerFileStatPy(String input, LinkedList<Variable> variables_json, String path) throws Exception {
+    public static AnalyzerResult analyzerFileStatPy(String input, LinkedList<Variable> variables_json) throws Exception {
         Lexical scanner = new Lexical(new StringReader(input));
         Syntactic parser = new Syntactic(scanner);
-        parser.setValues(variables_json, path);
+        parser.setValues(variables_json);
         try {
             parser.parse();
         } catch (Exception ex) {
@@ -35,10 +35,13 @@ public class Utils {
         } catch (Exception ex) {
             throw ex;
         }
+        /*
         for (Variable variable : parser.variables_json) {
-            //variables_json.add(variable);
-            System.out.println(variable.getName());
+            if (variable != null) {
+                System.out.println(variable.getName()+ ", "+variable.getValue());
+            }
         }
+        */
         return new AnalyzerResult(scanner.lexicalErrors, parser.errors, scanner.tokens, parser.variables_json);
     }
 

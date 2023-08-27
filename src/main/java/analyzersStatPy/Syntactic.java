@@ -556,11 +556,9 @@ public class Syntactic extends java_cup.runtime.lr_parser {
     public LinkedList<SintaxError> errors = new LinkedList<>();
     public LinkedList<Variable> variables = new LinkedList<>();
     public LinkedList<Variable> variables_json = new LinkedList<>();
-    String path = "";
 
-    public void setValues (LinkedList<Variable> variables_json, String path) {
-        variables_json = variables_json;
-        path = path;
+    public void setValues (LinkedList<Variable> variablesjson) {
+        variables_json = variablesjson;
     }
 
     public void syntax_error(Symbol s){

@@ -26,7 +26,7 @@ public class Interface extends javax.swing.JFrame {
     LinkedList<SintaxError> sintaxErrorsJSON;
     LinkedList<Tokens> tokensStatPy;
     LinkedList<Tokens> tokensJSON;
-    LinkedList<Variable> variables_json;
+    LinkedList<Variable> variables_json = new LinkedList<>();
     int line = 1;
     int column = 1;
     String currentAnalyzer = "StatPy";
@@ -385,7 +385,7 @@ public class Interface extends javax.swing.JFrame {
         //Codigo
         if (this.currentAnalyzer.equals("StatPy")) {
             try {
-                AnalyzerResult result = Utils.analyzerFileStatPy(content, variables_json, "");
+                AnalyzerResult result = Utils.analyzerFileStatPy(content, variables_json);
                 this.ast = result.ast;
                 this.lexErrorsStatPy = result.lexErrors;
                 this.tokensStatPy = result.tokens;
@@ -428,20 +428,21 @@ public class Interface extends javax.swing.JFrame {
             }
 
         } else if (this.currentAnalyzer.equals("JSON")) {
+            File file = new File(path_file);
+            String fileName = file.getName();
+            //System.out.println(fileName);
             try {
-                AnalyzerResult result = Utils.analyzerFileJSON(content, "");
+                AnalyzerResult result = Utils.analyzerFileJSON(content, fileName);
                 this.ast = result.ast;
                 this.lexErrorsJSON = result.lexErrors;
                 this.tokensJSON = result.tokens;
                 this.sintaxErrorsJSON = result.sintaxErrors;
 
-                //System.out.println(result.variables_json);
-                
                 for (Variable variable : result.variables_json) {
-                    //variables_json.add(variable);
-                    System.out.println(variable);
+                    if (variable != null) {
+                        variables_json.add(variable);
+                    }
                 }
-                
 
                 if (!lexErrorsJSON.isEmpty() || !sintaxErrorsJSON.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Se han encontrado errores en la entrada", "Error", JOptionPane.WARNING_MESSAGE);

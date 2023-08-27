@@ -10,11 +10,11 @@ parser code {:
 
     public LinkedList<SintaxError> errors = new LinkedList<>();
     public LinkedList<Variable> variables_json = new LinkedList<>();
-    String path = "";
+    public String file_path = "";
 
     public void setValues (LinkedList<Variable> variables_json, String path) {
         variables_json = variables_json;
-        path = path;
+        file_path = path;
     }
 
     public void syntax_error(Symbol s){
@@ -47,7 +47,7 @@ object ::= LEFT_CURLY_BRACKET member_list RIGHT_CURLY_BRACKET
 member_list ::= member_list COMMA pair 
               | pair;
 
-pair ::= STRING:k COLON value:v {: variables_json.add(new Variable(k, String.valueOf(v), path)); :};
+pair ::= STRING:k COLON value:v {: variables_json.add(new Variable(k, String.valueOf(v), file_path)); :};
 
 array ::= LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET
         | LEFT_SQUARE_BRACKET value_list RIGHT_SQUARE_BRACKET;

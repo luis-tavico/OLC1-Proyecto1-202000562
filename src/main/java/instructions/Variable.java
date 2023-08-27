@@ -21,4 +21,12 @@ public class Variable {
     public String getName() {
         return this.variable_name;
     }
+    
+    public String getValue() {
+        return this.variable_value;
+    }
+    
+    public String getPath() {
+        return this.path;
+    }
 }

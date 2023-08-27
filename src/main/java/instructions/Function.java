@@ -10,7 +10,7 @@ public class Function implements Statement {
     String funcId;
     LinkedList<Declaration_Assignment> decla_assigs;
     LinkedList<Variable> variables;
-    LinkedList<Variable> variables_json;
+    LinkedList<Variable> variables_json = new LinkedList<>();
 
     public Function(String funcId, LinkedList<Declaration_Assignment> decla_assigs, LinkedList<Variable> variables, LinkedList<Variable> variables_json) {
         this.funcId = funcId;
@@ -62,13 +62,14 @@ public class Function implements Statement {
                     }
                 }
             }
-            
+
+            System.out.println(variables_json);
             for (Variable variable : variables_json) {
                 if (variable != null) {
-                    System.out.println(variable.variable_name + ", " + variable.variable_value);
+                    System.out.println(variable.getName() + ", " + variable.getValue());
                 }
             }
-            
+
             BarChart barChart = new BarChart();
             double valores[] = {75.0, 61.0, 70.0, 50.0, 63.0};
             String nombres[] = {"Juan", "Diana", "Pedro", "Sofia", "Roberto"};
