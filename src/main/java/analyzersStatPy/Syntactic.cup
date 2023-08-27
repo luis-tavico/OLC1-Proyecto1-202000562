@@ -66,10 +66,9 @@ non terminal Operation unitary;
 non terminal If if;
 non terminal For for;
 
-non terminal Statement funcstatement;
-non terminal LinkedList<Statement> funcstatements;
-
 non terminal Statement function;
+non terminal LinkedList<Declaration_Assignment> funcstatements;
+non terminal Declaration_Assignment funcstatement;
 
 non terminal Statement mainstatement;
 non terminal LinkedList<Statement> mainstatements;
@@ -122,13 +121,14 @@ data_type ::= INT:i {: RESULT = i; :}
 args_list ::= args_list:a COMMA expr:e {:RESULT = a; RESULT.add(e); :}
             | expr:e {: RESULT = new LinkedList<Operation>(); RESULT.add(e); :};
 
-function ::= VOID ID:i LEFT_PARENTHESIS RIGHT_PARENTHESIS LEFT_CURLY_BRACKET funcstatements:s RIGHT_CURLY_BRACKET {: RESULT = new Function(i, s); :};
+function ::= VOID ID:i LEFT_PARENTHESIS RIGHT_PARENTHESIS LEFT_CURLY_BRACKET funcstatements:f RIGHT_CURLY_BRACKET {: RESULT = new Function(i, f); :};
 
-funcstatements ::= funcstatement:f funcstatements:s {:RESULT=s; RESULT.add(f);:}
-                 | funcstatement:f {:RESULT = new LinkedList<Statement>(); RESULT.add(f);:};
+funcstatements ::= funcstatement:f funcstatements:s  {: RESULT = s; RESULT.add(f); :}
+                 | funcstatement:f {: RESULT = new LinkedList<Declaration_Assignment>(); RESULT.add(f); :};
 
-funcstatement ::= statement:s {:RESULT = s;:}
-                | RETURN expr:e SEMI_COLON {:RESULT = new Return(e);:};
+funcstatement ::= data_type ID:i SEMI_COLON {: RESULT = new Declaration_Assignment(i); :}
+                | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}
+                | ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :};
 
 if ::= IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new If(e, s); :}
      | IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET ELSE LEFT_CURLY_BRACKET statements:t RIGHT_CURLY_BRACKET {: RESULT = new If(e, s, t); :}
