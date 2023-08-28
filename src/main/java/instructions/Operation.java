@@ -74,9 +74,11 @@ public class Operation implements Statement {
 
         switch (typeOp) {
             case BINARY -> {
-                if (!isNumber(left.translatePython())) {
-                    if (PythonUtils.pythonSymbolBinaryOperators(type).equals("+")) {
+                if (PythonUtils.pythonSymbolBinaryOperators(type).equals("+")) {
+                    if (!isNumber(left.translatePython())) {
                         str.append(left.translatePython()).append(" , ").append(right.translatePython());
+                    } else {
+                        str.append(left.translatePython()).append(" ").append(PythonUtils.pythonSymbolBinaryOperators(type)).append(" ").append(right.translatePython());
                     }
                 } else {
                     str.append(left.translatePython()).append(" ").append(PythonUtils.pythonSymbolBinaryOperators(type)).append(" ").append(right.translatePython());
@@ -98,8 +100,8 @@ public class Operation implements Statement {
             default ->
                 throw new AssertionError();
         }
-        
+
         return str.toString();
     }
-    
+
 }

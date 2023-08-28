@@ -1,7 +1,5 @@
 package view;
 
-import analyzersJSON.LexicalJSON;
-import analyzersJSON.SyntacticJSON;
 import javax.swing.*;
 import java.io.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -22,10 +20,12 @@ public class Interface extends javax.swing.JFrame {
     LinkedList<Statement> ast;
     LinkedList<LexicalError> lexErrorsStatPy;
     LinkedList<SintaxError> sintaxErrorsStatPy;
+    LinkedList<Tokens> tokensStatPy;
+    //
     LinkedList<LexicalError> lexErrorsJSON;
     LinkedList<SintaxError> sintaxErrorsJSON;
-    LinkedList<Tokens> tokensStatPy;
     LinkedList<Tokens> tokensJSON;
+    //
     LinkedList<Variable> variables_json = new LinkedList<>();
     int line = 1;
     int column = 1;
@@ -58,8 +58,12 @@ public class Interface extends javax.swing.JFrame {
         btnJson = new javax.swing.JMenuItem();
         btnRun = new javax.swing.JMenu();
         btnReport = new javax.swing.JMenu();
-        btnTokensReport = new javax.swing.JMenuItem();
-        btnErrorsReport = new javax.swing.JMenuItem();
+        menuTokens = new javax.swing.JMenu();
+        btnTokensJSON = new javax.swing.JMenuItem();
+        btnTokensStatPy = new javax.swing.JMenuItem();
+        menuErrors = new javax.swing.JMenu();
+        btnErrorsJSON = new javax.swing.JMenuItem();
+        btnErrorsStatPy = new javax.swing.JMenuItem();
         btnHelp = new javax.swing.JMenu();
         btnUserManual = new javax.swing.JMenuItem();
         btnTechManual = new javax.swing.JMenuItem();
@@ -216,21 +220,45 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        btnTokensReport.setText("Tokens");
-        btnTokensReport.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTokensReportActionPerformed(evt);
-            }
-        });
-        btnReport.add(btnTokensReport);
+        menuTokens.setText("Tokens");
 
-        btnErrorsReport.setText("Errores");
-        btnErrorsReport.addActionListener(new java.awt.event.ActionListener() {
+        btnTokensJSON.setText("JSON");
+        btnTokensJSON.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnErrorsReportActionPerformed(evt);
+                btnTokensJSONActionPerformed(evt);
             }
         });
-        btnReport.add(btnErrorsReport);
+        menuTokens.add(btnTokensJSON);
+
+        btnTokensStatPy.setText("StatPy");
+        btnTokensStatPy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTokensStatPyActionPerformed(evt);
+            }
+        });
+        menuTokens.add(btnTokensStatPy);
+
+        btnReport.add(menuTokens);
+
+        menuErrors.setText("Errores");
+
+        btnErrorsJSON.setText("JSON");
+        btnErrorsJSON.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnErrorsJSONActionPerformed(evt);
+            }
+        });
+        menuErrors.add(btnErrorsJSON);
+
+        btnErrorsStatPy.setText("StatPy");
+        btnErrorsStatPy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnErrorsStatPyActionPerformed(evt);
+            }
+        });
+        menuErrors.add(btnErrorsStatPy);
+
+        btnReport.add(menuErrors);
 
         jMenuBar1.add(btnReport);
 
@@ -277,10 +305,10 @@ public class Interface extends javax.swing.JFrame {
         int result = file_chooser.showOpenDialog(this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            File archivoSeleccionado = file_chooser.getSelectedFile();
+            File fileSelected = file_chooser.getSelectedFile();
             String content = "";
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(archivoSeleccionado));
+                BufferedReader reader = new BufferedReader(new FileReader(fileSelected));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     content += line + "\n";
@@ -290,7 +318,7 @@ public class Interface extends javax.swing.JFrame {
                 ex.printStackTrace();
             }
             this.areaCode.setText(content);
-            path_file = String.valueOf(archivoSeleccionado);
+            path_file = String.valueOf(fileSelected);
             this.lexErrorsStatPy = null;
             this.sintaxErrorsStatPy = null;
         }
@@ -368,28 +396,15 @@ public class Interface extends javax.swing.JFrame {
     private void btnRunMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRunMousePressed
         this.areaResult.setText("");
         String content = this.areaCode.getText();
-        /*
+
         if (this.currentAnalyzer.equals("StatPy")) {
-            try {
-                Lexico scanner = new Lexico(new java.io.StringReader(contenido));
-                Sintactico parser = new Sintactico(scanner);
-                parser.parse();
-                System.out.println("¡Analisis Finalizado!");
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        } else if (this.currentAnalyzer.equals("JSON")) {
-            System.out.println("JSON");
-        }
-         */
-        //Codigo
-        if (this.currentAnalyzer.equals("StatPy")) {
+
             try {
                 AnalyzerResult result = Utils.analyzerFileStatPy(content, variables_json);
                 this.ast = result.ast;
                 this.lexErrorsStatPy = result.lexErrors;
-                this.tokensStatPy = result.tokens;
                 this.sintaxErrorsStatPy = result.sintaxErrors;
+                this.tokensStatPy = result.tokens;
 
                 if (!lexErrorsStatPy.isEmpty() || !sintaxErrorsStatPy.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Se han encontrado errores en la entrada", "Error", JOptionPane.WARNING_MESSAGE);
@@ -398,45 +413,42 @@ public class Interface extends javax.swing.JFrame {
                     String content_html_errors = lexicalErrorsReport.generateErrorsReport(lexErrorsStatPy);
 
                     try {
-                        FileWriter writer = new FileWriter("./src/main/java/reports/erroresStatPy.html");
+                        FileWriter writer = new FileWriter("./src/main/java/docs/erroresStatPy.html");
                         writer.write(content_html_errors);
                         writer.close();
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
 
-                    TokensReport all_tokens = new TokensReport();
-                    String content_html_tokens = all_tokens.generateTokenReport(tokensStatPy);
-
-                    try {
-                        FileWriter writer = new FileWriter("./src/main/java/reports/tokensStatPy.html");
-                        writer.write(content_html_tokens);
-                        writer.close();
-                    } catch (IOException e) {
-                        JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-
                 } else {
-                    if (ast == null) {
-                        JOptionPane.showMessageDialog(this, "No se ha ejecutado el archivo", "Error", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
                     this.areaResult.insert(Utils.translatePython(ast), 0);
                 }
+
+                TokensReport all_tokens = new TokensReport();
+                String content_html_tokens = all_tokens.generateTokenReport(tokensStatPy);
+
+                try {
+                    FileWriter writer = new FileWriter("./src/main/java/docs/tokensStatPy.html");
+                    writer.write(content_html_tokens);
+                    writer.close();
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
             }
 
         } else if (this.currentAnalyzer.equals("JSON")) {
+
             File file = new File(path_file);
             String fileName = file.getName();
-            //System.out.println(fileName);
+
             try {
                 AnalyzerResult result = Utils.analyzerFileJSON(content, fileName);
-                this.ast = result.ast;
                 this.lexErrorsJSON = result.lexErrors;
-                this.tokensJSON = result.tokens;
                 this.sintaxErrorsJSON = result.sintaxErrors;
+                this.tokensJSON = result.tokens;
 
                 for (Variable variable : result.variables_json) {
                     if (variable != null) {
@@ -451,29 +463,26 @@ public class Interface extends javax.swing.JFrame {
                     String content_html_errors = lexicalErrorsReport.generateErrorsReport(lexErrorsJSON);
 
                     try {
-                        FileWriter writer = new FileWriter("./src/main/java/reports/erroresJSON.html");
+                        FileWriter writer = new FileWriter("./src/main/java/docs/erroresJSON.html");
                         writer.write(content_html_errors);
                         writer.close();
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
 
-                    TokensReport all_tokens = new TokensReport();
-                    String content_html_tokens = all_tokens.generateTokenReport(tokensJSON);
-
-                    try {
-                        FileWriter writer = new FileWriter("./src/main/java/reports/tokensJSON.html");
-                        writer.write(content_html_tokens);
-                        writer.close();
-                    } catch (IOException e) {
-                        JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                } else {
-
-                    JOptionPane.showMessageDialog(this, "No se ha ejecutado el archivo", "Error", JOptionPane.WARNING_MESSAGE);
-
                 }
+
+                TokensReport all_tokens = new TokensReport();
+                String content_html_tokens = all_tokens.generateTokenReport(tokensJSON);
+
+                try {
+                    FileWriter writer = new FileWriter("./src/main/java/docs/tokensJSON.html");
+                    writer.write(content_html_tokens);
+                    writer.close();
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
             }
@@ -524,76 +533,6 @@ public class Interface extends javax.swing.JFrame {
         this.lblCurrentAnalyzer.setText(this.currentAnalyzer);
     }//GEN-LAST:event_btnJsonActionPerformed
 
-    private void btnTokensReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTokensReportActionPerformed
-        try {
-            File fileHTML = new File("src/main/java/reports/tokensStatPy.html");
-
-            if (fileHTML.exists()) {
-                Desktop desktop = Desktop.getDesktop();
-                if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                    desktop.browse(fileHTML.toURI());
-                } else {
-                    JOptionPane.showMessageDialog(this, "La funcionalidad de navegación no es compatible.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "¡Error el archivo no existe!", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            File fileHTML = new File("src/main/java/reports/tokensJSON.html");
-
-            if (fileHTML.exists()) {
-                Desktop desktop = Desktop.getDesktop();
-                if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                    desktop.browse(fileHTML.toURI());
-                } else {
-                    JOptionPane.showMessageDialog(this, "La funcionalidad de navegación no es compatible.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "¡Error el archivo no existe!", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_btnTokensReportActionPerformed
-
-    private void btnErrorsReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnErrorsReportActionPerformed
-        try {
-            File fileHTML = new File("src/main/java/reports/erroresStatPy.html");
-
-            if (fileHTML.exists()) {
-                Desktop desktop = Desktop.getDesktop();
-                if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                    desktop.browse(fileHTML.toURI());
-                } else {
-                    JOptionPane.showMessageDialog(this, "La funcionalidad de navegación no es compatible.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "¡Error el archivo no existe!", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            File fileHTML = new File("src/main/java/reports/erroresJSON.html");
-
-            if (fileHTML.exists()) {
-                Desktop desktop = Desktop.getDesktop();
-                if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                    desktop.browse(fileHTML.toURI());
-                } else {
-                    JOptionPane.showMessageDialog(this, "La funcionalidad de navegación no es compatible.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "¡Error el archivo no existe!", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_btnErrorsReportActionPerformed
-
     private void btnUserManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserManualActionPerformed
         try {
             File filePDF = new File("src/main/java/docs/[OLC1]P12S2023.pdf");
@@ -631,6 +570,82 @@ public class Interface extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_btnTechManualActionPerformed
+
+    private void btnTokensJSONActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTokensJSONActionPerformed
+        try {
+            File fileHTML = new File("src/main/java/docs/tokensJSON.html");
+
+            if (fileHTML.exists()) {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(fileHTML.toURI());
+                } else {
+                    JOptionPane.showMessageDialog(this, "La funcionalidad de navegación no es compatible.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "¡Error el archivo no existe!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnTokensJSONActionPerformed
+
+    private void btnTokensStatPyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTokensStatPyActionPerformed
+        try {
+            File fileHTML = new File("src/main/java/docs/tokensStatPy.html");
+
+            if (fileHTML.exists()) {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(fileHTML.toURI());
+                } else {
+                    JOptionPane.showMessageDialog(this, "La funcionalidad de navegación no es compatible.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "¡Error el archivo no existe!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnTokensStatPyActionPerformed
+
+    private void btnErrorsJSONActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnErrorsJSONActionPerformed
+        try {
+            File fileHTML = new File("src/main/java/docs/erroresJSON.html");
+
+            if (fileHTML.exists()) {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(fileHTML.toURI());
+                } else {
+                    JOptionPane.showMessageDialog(this, "La funcionalidad de navegación no es compatible.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "¡Error el archivo no existe!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnErrorsJSONActionPerformed
+
+    private void btnErrorsStatPyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnErrorsStatPyActionPerformed
+        try {
+            File fileHTML = new File("src/main/java/docs/erroresStatPy.html");
+
+            if (fileHTML.exists()) {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(fileHTML.toURI());
+                } else {
+                    JOptionPane.showMessageDialog(this, "La funcionalidad de navegación no es compatible.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "¡Error el archivo no existe!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnErrorsStatPyActionPerformed
 
     /**
      * @param args the command line arguments
@@ -685,7 +700,8 @@ public class Interface extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea areaCode;
     private javax.swing.JTextArea areaResult;
-    private javax.swing.JMenuItem btnErrorsReport;
+    private javax.swing.JMenuItem btnErrorsJSON;
+    private javax.swing.JMenuItem btnErrorsStatPy;
     private javax.swing.JMenu btnHelp;
     private javax.swing.JMenuItem btnJson;
     private javax.swing.JMenuItem btnOpen;
@@ -695,7 +711,8 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JMenuItem btnSaveAs;
     private javax.swing.JMenuItem btnStatPy;
     private javax.swing.JMenuItem btnTechManual;
-    private javax.swing.JMenuItem btnTokensReport;
+    private javax.swing.JMenuItem btnTokensJSON;
+    private javax.swing.JMenuItem btnTokensStatPy;
     private javax.swing.JMenuItem btnUserManual;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
@@ -703,7 +720,9 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblCurrentAnalyzer;
     private javax.swing.JMenu menuAnalyzer;
+    private javax.swing.JMenu menuErrors;
     private javax.swing.JMenu menuFile;
+    private javax.swing.JMenu menuTokens;
     private javax.swing.JTextField position;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,5 +1,6 @@
 package instructions;
 
+import enums.EnumOperations;
 import java.util.LinkedList;
 import utils.PythonUtils;
 import utils.Utils;
@@ -34,9 +35,17 @@ public class For implements Statement {
         //min = String.valueOf((Integer.parseInt(min) + 1));
 
         if (PythonUtils.pythonSymbolUnitaryOperators(expr2.typeUnitary).equals("++")) {
-            str.append("for ").append(varId).append(" in range(").append(min).append(", ").append(expr1.right.translatePython()).append(", ").append("1").append("):\n");
+            String max = expr1.right.translatePython();
+            if (expr1.type.compareTo(EnumOperations.LESS_EQUAL) == 0) {
+                max = String.valueOf((Integer.parseInt(expr1.right.translatePython()) + 1));
+            }
+            str.append("for ").append(varId).append(" in range(").append(min).append(", ").append(max).append(", ").append("1").append("):\n");
         } else if (PythonUtils.pythonSymbolUnitaryOperators(expr2.typeUnitary).equals("--")) {
-
+            String max = expr1.right.translatePython();
+            if (expr1.type.compareTo(EnumOperations.GREATER_EQUAL) == 0) {
+                max = String.valueOf((Integer.parseInt(expr1.right.translatePython()) - 1));
+            }
+            str.append("for ").append(varId).append(" in range(").append(min).append(", ").append(max).append(", ").append("-1").append("):\n");
         }
 
         for (Statement statement : statements) {

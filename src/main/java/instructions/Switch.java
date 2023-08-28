@@ -34,9 +34,10 @@ public class Switch implements Statement {
             str.append("\t").append(aCase.expr.translatePython()).append(": ");
             for (Statement statement : aCase.statements) {
                 if (statement != null) {
-                    str.append(Utils.addTabs(statement.translatePython()).replaceAll("[\t\n]", "")).append(",\n");
+                    str.append(Utils.addTabs(statement.translatePython()).replaceAll("[\t\n]", ""));
                 }
             }
+            str.append(",\n");
             i++;
         }
         if (default_statement != null) {
