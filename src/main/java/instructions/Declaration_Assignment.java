@@ -7,7 +7,7 @@ public class Declaration_Assignment implements Statement {
     String varId;
     //EnumTypes type;
     Operation expr;
-    LinkedList<Operation> variables = new LinkedList<>(); 
+    LinkedList<Operation> variables = new LinkedList<>();
 
     public Declaration_Assignment(String varId, LinkedList<Operation> variables) {
         this.varId = varId;
@@ -27,9 +27,13 @@ public class Declaration_Assignment implements Statement {
     public String translatePython() {
         StringBuilder str = new StringBuilder();
 
-        str.append(varId).append(" = ").append(expr.translatePython()).append("\n");
+        if (expr != null) {
+            str.append(varId).append(" = ").append(expr.translatePython()).append("\n");
+        } else {
+            str.append("var ").append(varId);
+        }
 
         return str.toString();
     }
-    
+
 }

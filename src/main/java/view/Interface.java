@@ -422,6 +422,8 @@ public class Interface extends javax.swing.JFrame {
 
                 } else {
                     this.areaResult.insert(Utils.translatePython(ast), 0);
+                    JOptionPane.showMessageDialog(this, "¡Analisis realizado exitosamente!", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+
                 }
 
                 TokensReport all_tokens = new TokensReport();
@@ -470,6 +472,8 @@ public class Interface extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
 
+                } else {
+                    JOptionPane.showMessageDialog(this, "¡Analisis realizado exitosamente!", "Informacion", JOptionPane.INFORMATION_MESSAGE);
                 }
 
                 TokensReport all_tokens = new TokensReport();

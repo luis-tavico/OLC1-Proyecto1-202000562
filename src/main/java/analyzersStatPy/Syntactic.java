@@ -639,9 +639,9 @@ public class Syntactic extends java_cup.runtime.lr_parser {
             errors.add(new SintaxError(s.value.toString(), s.left, s.right));
     }
 
-    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
-        throw new Exception("Error irrecuperable en: " + s.value + ", Linea: " + s.left + ", Columna: " + (s.right));
-    }  
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error irrecuperable en: " + s.value + ", Linea: " + s.left + ", Columna: " + s.right);
+    }
 
             
 
@@ -756,7 +756,7 @@ class CUP$Syntactic$actions {
 		int tleft = ((java_cup.runtime.Symbol)CUP$Syntactic$stack.peek()).left;
 		int tright = ((java_cup.runtime.Symbol)CUP$Syntactic$stack.peek()).right;
 		LinkedList<Statement> t = (LinkedList<Statement>)((java_cup.runtime.Symbol) CUP$Syntactic$stack.peek()).value;
-		 RESULT=t; RESULT.add(s); 
+		 RESULT=t; RESULT.addFirst(s); 
               CUP$Syntactic$result = parser.getSymbolFactory().newSymbol("statements",1, ((java_cup.runtime.Symbol)CUP$Syntactic$stack.elementAt(CUP$Syntactic$top-1)), ((java_cup.runtime.Symbol)CUP$Syntactic$stack.peek()), RESULT);
             }
           return CUP$Syntactic$result;
@@ -768,7 +768,7 @@ class CUP$Syntactic$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$Syntactic$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$Syntactic$stack.peek()).right;
 		Statement s = (Statement)((java_cup.runtime.Symbol) CUP$Syntactic$stack.peek()).value;
-		 RESULT = new LinkedList<Statement>(); RESULT.add(s); 
+		 RESULT = new LinkedList<Statement>(); RESULT.addFirst(s); 
               CUP$Syntactic$result = parser.getSymbolFactory().newSymbol("statements",1, ((java_cup.runtime.Symbol)CUP$Syntactic$stack.peek()), ((java_cup.runtime.Symbol)CUP$Syntactic$stack.peek()), RESULT);
             }
           return CUP$Syntactic$result;

@@ -40,9 +40,9 @@ parser code {:
             errors.add(new SintaxError(s.value.toString(), s.left, s.right));
     }
 
-    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
-        throw new Exception("Error irrecuperable en: " + s.value + ", Linea: " + s.left + ", Columna: " + (s.right));
-    }  
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error irrecuperable en: " + s.value + ", Linea: " + s.left + ", Columna: " + s.right);
+    }
 
             :}
 
@@ -98,8 +98,8 @@ mainstatements ::= mainstatement:s mainstatements:t  {: RESULT=t; RESULT.add(s);
 mainstatement ::= statement:s {: RESULT = s; :}
                 | function:f {: RESULT = f; :};
 
-statements ::= statement:s statements:t  {: RESULT=t; RESULT.add(s); :}
-             | statement:s {: RESULT = new LinkedList<Statement>(); RESULT.add(s); :};
+statements ::= statement:s statements:t  {: RESULT=t; RESULT.addFirst(s); :}
+             | statement:s {: RESULT = new LinkedList<Statement>(); RESULT.addFirst(s); :};
 
 statement ::= data_type:d ID:i SEMI_COLON {: RESULT = new Declaration_Assignment(i); :}
             | data_type:d ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}

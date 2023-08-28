@@ -138,9 +138,9 @@ public class SyntacticJSON extends java_cup.runtime.lr_parser {
             errors.add(new SintaxError(s.value.toString(), s.left, s.right));
     }
 
-    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
-        throw new Exception("Error irrecuperable en: " + s.value + ", Linea: " + s.left + ", Columna: " + (s.right));
-    }  
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error irrecuperable en: " + s.value + ", Linea: " + s.left + ", Columna: " + s.right);
+    }
 
             
 

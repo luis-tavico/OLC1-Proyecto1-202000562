@@ -46,17 +46,16 @@ public class Utils {
         for (Statement statement : ast) {
             if (statement != null) {
                 String className = statement.getClass().getSimpleName();
-                if ("Procedure".equals(className) || "Function".equals(className)) {
-                    methods.add(statement);
+                if ("Function".equals(className)) {
+                    methods.addFirst(statement);
                 } else {
-                    mainStatements.add(statement);
+                    mainStatements.addFirst(statement);
                 }
             }
         }
 
         for (Statement method : methods) {
-            System.out.println(method);
-            str.append(method.translatePython()).append("\n");
+            str.append(method.translatePython());
         }
 
         str.append("def main():\n");
@@ -65,7 +64,9 @@ public class Utils {
         }
         str.append("if __name__ == '__main__':\n");
         str.append("\tmain()");
+        
         return str.toString();
+        
     }
 
     public static EnumTypes checkTypes(String type) {
