@@ -1,5 +1,5 @@
 package enums;
 
 public enum EnumUnitaryOperations {
-    MINUS, NOT;
+    MINUS, NOT, INCREASE, DECREASE;
 }

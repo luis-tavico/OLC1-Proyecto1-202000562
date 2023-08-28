@@ -826,7 +826,7 @@ public class Lexical implements java_cup.runtime.Scanner {
             // fall through
           case 62: break;
           case 5: 
-            { yychar = 1;
+            { yychar = 0;
             } 
             // fall through
           case 63: break;

@@ -1,8 +1,8 @@
 package instructions;
 
 import enums.EnumTerminals;
-import graph.BarChart;
-import graph.PieChart;
+import charts.BarChart;
+import charts.PieChart;
 import java.util.LinkedList;
 import javax.swing.WindowConstants;
 

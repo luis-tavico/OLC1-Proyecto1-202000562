@@ -74,6 +74,12 @@ public class PythonUtils {
                     return "False";
                 }
             }
+            case CONTINUE -> {
+                return "continue";
+            }
+            case BREAK -> {
+                return "break";
+            }
             default ->
                 throw new AssertionError();
         }
@@ -87,6 +93,12 @@ public class PythonUtils {
             }
             case NOT -> {
                 return "not";
+            }
+            case INCREASE -> {
+                return "++";
+            }
+            case DECREASE -> {
+                return "--";
             }
             default ->
                 throw new AssertionError();

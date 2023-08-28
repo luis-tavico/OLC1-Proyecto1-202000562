@@ -95,7 +95,7 @@ ID = [a-zA-Z]+ | [a-zA-Z_][a-zA-Z0-9_]+
 ":"                     { tokens.add(new Tokens(yytext(), "dos_puntos", yyline, (int)yychar)); return new Symbol(sym.COLON, yyline, (int)yychar, yytext()); }
 "$"                     { tokens.add(new Tokens(yytext(), "dolar", yyline, (int)yychar)); return new Symbol(sym.DOLLAR, yyline, (int)yychar, yytext()); }
 
-\n                      { yychar = 1; }
+\n                      { yychar = 0; }
 
 {BLANKS}                {}
 {MULTILINE_COMMENT}     { System.out.println(yytext()); }

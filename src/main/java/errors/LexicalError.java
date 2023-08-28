@@ -8,6 +8,6 @@ public class LexicalError {
     public LexicalError(String lexeme, int line, int column){
         this.lexeme = lexeme;
         this.line = line;
-        this.column = (column-1);
+        this.column = column;
     }
 }

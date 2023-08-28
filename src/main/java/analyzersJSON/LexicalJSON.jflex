@@ -47,7 +47,7 @@ STRING = \" ([^\"] | "\\\"")+ \"
 ","                     { tokens.add(new Tokens(yytext(), "corchete_abierto", yyline, (int)yychar)); return new Symbol(sym.COMMA, yyline, (int)yychar, yytext()); }
 ":"                     { tokens.add(new Tokens(yytext(), "corchete_cerrado", yyline, (int)yychar)); return new Symbol(sym.COLON, yyline, (int)yychar, yytext()); }
 
-\n                      { yychar = 1; }
+\n                      { yychar = 0; }
 
 {BLANKS}                { }
 {MULTILINE_COMMENT}     { }
@@ -58,5 +58,4 @@ STRING = \" ([^\"] | "\\\"")+ \"
 
 . {
     lexicalErrors.add(new LexicalError(yytext(), yyline, (int)yychar));
-    System.out.println("Error lexico en: " + yytext() + ", Linea: " + yyline + ", Columna: " + yychar);
   }

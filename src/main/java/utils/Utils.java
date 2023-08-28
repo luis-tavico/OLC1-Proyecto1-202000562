@@ -35,13 +35,6 @@ public class Utils {
         } catch (Exception ex) {
             throw ex;
         }
-        /*
-        for (Variable variable : parser.variables_json) {
-            if (variable != null) {
-                System.out.println(variable.getName()+ ", "+variable.getValue());
-            }
-        }
-        */
         return new AnalyzerResult(scanner.lexicalErrors, parser.errors, scanner.tokens, parser.variables_json);
     }
 
@@ -62,6 +55,7 @@ public class Utils {
         }
 
         for (Statement method : methods) {
+            System.out.println(method);
             str.append(method.translatePython()).append("\n");
         }
 

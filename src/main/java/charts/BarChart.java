@@ -1,4 +1,4 @@
-package graph;
+package charts;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -32,7 +32,7 @@ public class BarChart extends JFrame {
         chartPanel.setPreferredSize(new Dimension(700, 400));
         setContentPane(chartPanel);
 
-        // Create the PDF document
+        // Create PDF document
         Document document = new Document(PageSize.LETTER);
         try {
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("./src/main/java/docs/grafica_barras.pdf"));

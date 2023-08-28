@@ -115,6 +115,8 @@ statement ::= data_type:d ID:i SEMI_COLON {: RESULT = new Declaration_Assignment
             | DO LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS SEMI_COLON {: RESULT = new DoWhile(s, e); :}
             | DO LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS SEMI_COLON {: RESULT = new DoWhile(e); :}
             | CONSOLE PERIOD WRITE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS SEMI_COLON {: RESULT = new Print(e); :}
+            | CONTINUE:c SEMI_COLON {: RESULT = new Operation(c, EnumTerminals.CONTINUE); :}
+            | BREAK:b SEMI_COLON {: RESULT = new Operation(b, EnumTerminals.BREAK); :}
             | error RIGHT_CURLY_BRACKET
             | error SEMI_COLON;
 
