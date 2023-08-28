@@ -51,18 +51,43 @@ public class Operation implements Statement {
         this.typeOp = TypeOperation.GROUP;
     }
 
+    public static boolean isNumber(String text) {
+        boolean isNumber = false;
+        try {
+            Integer.parseInt(text);
+            isNumber = true;
+        } catch (NumberFormatException e) {
+            isNumber = false;
+        }
+        try {
+            Double.parseDouble(text);
+            isNumber = true;
+        } catch (NumberFormatException e) {
+            isNumber = false;
+        }
+        return isNumber;
+    }
+
     @Override
     public String translatePython() {
         StringBuilder str = new StringBuilder();
 
         switch (typeOp) {
             case BINARY -> {
-                str.append(left.translatePython()).append(" ")
-                        .append(PythonUtils.pythonSymbolBinaryOperators(type)).append(" ")
-                        .append(right.translatePython());
+                if (!isNumber(left.translatePython())) {
+                    if (PythonUtils.pythonSymbolBinaryOperators(type).equals("+")) {
+                        str.append(left.translatePython()).append(" , ").append(right.translatePython());
+                    }
+                } else {
+                    str.append(left.translatePython()).append(" ").append(PythonUtils.pythonSymbolBinaryOperators(type)).append(" ").append(right.translatePython());
+                }
             }
             case UNITARY -> {
-                str.append(PythonUtils.pythonSymbolUnitaryOperators(typeUnitary)).append(" ").append(op.translatePython());
+                if (PythonUtils.pythonSymbolUnitaryOperators(typeUnitary).equals("++") || PythonUtils.pythonSymbolUnitaryOperators(typeUnitary).equals("--")) {
+                    str.append(op.translatePython()).append(PythonUtils.pythonSymbolUnitaryOperators(typeUnitary));
+                } else {
+                    str.append(PythonUtils.pythonSymbolUnitaryOperators(typeUnitary)).append(" ").append(op.translatePython());
+                }
             }
             case TERMINAL -> {
                 str.append(PythonUtils.pythonTerminals(value, typeTerminal));
@@ -70,12 +95,11 @@ public class Operation implements Statement {
             case GROUP -> {
                 str.append("(").append(opGroup.translatePython()).append(")");
             }
-
             default ->
                 throw new AssertionError();
         }
-
+        
         return str.toString();
     }
-
+    
 }

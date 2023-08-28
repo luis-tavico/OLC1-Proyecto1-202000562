@@ -627,7 +627,6 @@ public class LexicalJSON implements java_cup.runtime.Scanner {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { lexicalErrors.add(new LexicalError(yytext(), yyline, (int)yychar));
-    System.out.println("Error lexico en: " + yytext() + ", Linea: " + yyline + ", Columna: " + yychar);
             } 
             // fall through
           case 12: break;
@@ -637,7 +636,7 @@ public class LexicalJSON implements java_cup.runtime.Scanner {
             // fall through
           case 13: break;
           case 3: 
-            { yychar = 1;
+            { yychar = 0;
             } 
             // fall through
           case 14: break;

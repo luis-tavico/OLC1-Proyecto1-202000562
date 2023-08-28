@@ -2,7 +2,6 @@ package instructions;
 
 import java.util.LinkedList;
 import utils.Utils;
-import utils.PythonUtils;
 
 public class ElseIf implements Statement {
 

@@ -57,7 +57,6 @@ ID = [a-zA-Z]+ | [a-zA-Z_][a-zA-Z0-9_]+
 "do"                    { tokens.add(new Tokens(yytext(), "do", yyline, (int)yychar)); return new Symbol(sym.DO, yyline, (int)yychar, yytext()); }
 "console"               { tokens.add(new Tokens(yytext(), "console", yyline, (int)yychar)); return new Symbol(sym.CONSOLE, yyline, (int)yychar, yytext()); }
 "write"                 { tokens.add(new Tokens(yytext(), "write", yyline, (int)yychar)); return new Symbol(sym.WRITE, yyline, (int)yychar, yytext()); }
-"return"                { tokens.add(new Tokens(yytext(), "return", yyline, (int)yychar)); return new Symbol(sym.RETURN, yyline, (int)yychar, yytext()); }
 "break"                 { tokens.add(new Tokens(yytext(), "break", yyline, (int)yychar)); return new Symbol(sym.BREAK, yyline, (int)yychar, yytext()); }
 "continue"              { tokens.add(new Tokens(yytext(), "continue", yyline, (int)yychar)); return new Symbol(sym.CONTINUE, yyline, (int)yychar, yytext()); }
 

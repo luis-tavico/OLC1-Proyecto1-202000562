@@ -7,7 +7,6 @@ import errors.SintaxError;
 import instructions.Variable;
 import instructions.Statement;
 import instructions.Operation;
-import instructions.Param;
 
 import instructions.Function;
 import instructions.Declaration_Assignment;
@@ -19,12 +18,11 @@ import instructions.For;
 import instructions.While;
 import instructions.DoWhile; 
 import instructions.Print;
-import instructions.Return;
 import instructions.SearchValue;
 
 import enums.EnumOperations;
-import enums.EnumTerminals;
 import enums.EnumUnitaryOperations;
+import enums.EnumTerminals;
 
 parser code {:
 
@@ -39,17 +37,16 @@ parser code {:
 
     public void syntax_error(Symbol s){
         if (s.value != null)
-            errors.add(new SintaxError(s.value.toString(), s.left, (s.right-1)));
-        System.out.println("Error sintactico en: " + s.value.toString() + ", Linea: " + (s.left) + ", Columna: " + (s.right-1));
+            errors.add(new SintaxError(s.value.toString(), s.left, s.right));
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
-        System.out.println("Error sintactico NR en: " + s.value + ", Linea: " + (s.left+1) + ", Columna: " + (s.right+1));
-    }
+        throw new Exception("Error irrecuperable en: " + s.value + ", Linea: " + s.left + ", Columna: " + (s.right));
+    }  
 
             :}
 
-terminal String VOID, MAIN, IF, ELSEIF, ELSE, SWITCH, CASE, DEFAULT, FOR, WHILE, DO, CONSOLE, WRITE, CONTINUE, BREAK, RETURN;
+terminal String VOID, MAIN, IF, ELSEIF, ELSE, SWITCH, CASE, DEFAULT, FOR, WHILE, DO, CONSOLE, WRITE, CONTINUE, BREAK;
 terminal String DECIMAL, INTEGER, TEXT, CHARACTER, BOOLEAN, ID;
 terminal String INT, DOUBLE, CHAR, BOOL, STRING;
 terminal String AND, OR, NOT; 
@@ -66,9 +63,10 @@ non terminal LinkedList<Operation> expr_list;
 non terminal LinkedList<ElseIf> elseifs;
 non terminal LinkedList<Case> cases;
 
-non terminal Operation aritmetic;
-non terminal Operation logical;
 non terminal Operation symbols;
+non terminal Operation aritmetic;
+non terminal Operation relational;
+non terminal Operation logical;
 non terminal Operation unitary;
 
 non terminal If if;
@@ -85,6 +83,7 @@ non terminal data_type;
 
 precedence left GREATER_THAN, LESS_THAN, GREATER_EQUAL, LESS_EQUAL, EQUAL_TO, NOT_EQUAL_TO;
 precedence left AND, OR;
+precedence left INCREASE, DECREASE;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 precedence left LEFT_PARENTHESIS;
@@ -147,14 +146,15 @@ if ::= IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statement
 elseifs ::= elseifs:f ELSEIF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = f; RESULT.add(new ElseIf(e, s)); :}
           | ELSEIF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new LinkedList<ElseIf>(); RESULT.add(new ElseIf(e, s)); :};
 
-cases ::= cases:c CASE INTEGER COLON statements:s {: RESULT = c; RESULT.add(new Case(s)); :}
-        | CASE INTEGER COLON statements:s {: RESULT = new LinkedList<Case>(); RESULT.add(new Case(s)); :};
+cases ::= cases:c CASE expr:e COLON statements:s {: RESULT = c; RESULT.add(new Case(e, s)); :}
+        | CASE expr:e COLON statements:s {: RESULT = new LinkedList<Case>(); RESULT.add(new Case(e, s)); :};
 
-for ::= FOR LEFT_PARENTHESIS INT ID:i EQUAL INTEGER:n SEMI_COLON expr:e SEMI_COLON ID INCREASE RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new For(i, n, e, s); :}
-      | FOR LEFT_PARENTHESIS INT ID:i EQUAL INTEGER:n SEMI_COLON expr:e SEMI_COLON ID INCREASE RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {: RESULT = new For(i, e); :};
+for ::= FOR LEFT_PARENTHESIS INT ID:i EQUAL INTEGER:n SEMI_COLON expr:e SEMI_COLON expr:x RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new For(i, n, e, x, s); :}
+      | FOR LEFT_PARENTHESIS INT ID:i EQUAL INTEGER:n SEMI_COLON expr:e SEMI_COLON expr:x RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {: RESULT = new For(i, n, e, x); :};
 
 expr ::= symbols:s {: RESULT = s; :}
        | aritmetic:a {: RESULT = a; :}
+       | relational:r {: RESULT = r; :}
        | logical:l {: RESULT = l; :}
        | unitary:u {: RESULT = u; :}
        | LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS {: RESULT = new Operation(e); :};
@@ -162,24 +162,27 @@ expr ::= symbols:s {: RESULT = s; :}
 symbols ::= ID:i {: RESULT = new Operation(i, EnumTerminals.ID); :}
           | TEXT:t {: RESULT = new Operation(t, EnumTerminals.TEXT); :}
           | CHARACTER:c {: RESULT = new Operation(c, EnumTerminals.CHARACTER); :}
+          | INTEGER:i {: RESULT = new Operation(i, EnumTerminals.INTEGER); :}
+          | DECIMAL:d {: RESULT = new Operation(d, EnumTerminals.DECIMAL); :}
+          | BOOLEAN:b {: RESULT = new Operation(b, EnumTerminals.BOOLEAN); :}
           | DOLLAR LEFT_CURLY_BRACKET ID COMMA TEXT:p COMMA TEXT:i RIGHT_CURLY_BRACKET {: SearchValue val = new SearchValue(variables_json, String.valueOf(p), String.valueOf(i)); RESULT = new Operation(val.getValue(), val.getTypeTerminal()); :};
 
 aritmetic ::= expr:a PLUS expr:b {: RESULT = new Operation(a, EnumOperations.PLUS, b); :}
             | expr:a MINUS expr:b {: RESULT = new Operation(a, EnumOperations.MINUS, b); :}
             | expr:a TIMES expr:b {: RESULT = new Operation(a, EnumOperations.TIMES, b); :}
-            | expr:a DIVIDE expr:b {: RESULT = new Operation(a, EnumOperations.DIVIDE, b); :}
-            | INTEGER:i {: RESULT = new Operation(i, EnumTerminals.INTEGER); :}
-            | DECIMAL:d {: RESULT = new Operation(d, EnumTerminals.DECIMAL); :};
+            | expr:a DIVIDE expr:b {: RESULT = new Operation(a, EnumOperations.DIVIDE, b); :};
 
-logical ::= expr:a GREATER_THAN expr:b {: RESULT = new Operation(a, EnumOperations.GREATER_THAN, b); :}
-          | expr:a LESS_THAN expr:b {: RESULT = new Operation(a, EnumOperations.LESS_THAN, b); :}
-          | expr:a GREATER_EQUAL expr:b {: RESULT = new Operation(a, EnumOperations.GREATER_EQUAL, b); :}
-          | expr:a LESS_EQUAL expr:b {: RESULT = new Operation(a, EnumOperations.LESS_EQUAL, b); :}
-          | expr:a EQUAL_TO expr:b {: RESULT = new Operation(a, EnumOperations.EQUAL_TO, b);:}
-          | expr:a NOT_EQUAL_TO expr:b {: RESULT = new Operation(a, EnumOperations.NOT_EQUAL_TO, b);:}
-          | expr:a AND expr:b {: RESULT = new Operation(a, EnumOperations.AND, b); :}
-          | expr:a OR expr:b {: RESULT = new Operation(a, EnumOperations.OR, b); :}
-          | BOOLEAN:b {: RESULT = new Operation(b, EnumTerminals.BOOLEAN); :};
+relational ::= expr:a GREATER_THAN expr:b {: RESULT = new Operation(a, EnumOperations.GREATER_THAN, b); :}
+             | expr:a LESS_THAN expr:b {: RESULT = new Operation(a, EnumOperations.LESS_THAN, b); :}
+             | expr:a GREATER_EQUAL expr:b {: RESULT = new Operation(a, EnumOperations.GREATER_EQUAL, b); :}
+             | expr:a LESS_EQUAL expr:b {: RESULT = new Operation(a, EnumOperations.LESS_EQUAL, b); :}
+             | expr:a EQUAL_TO expr:b {: RESULT = new Operation(a, EnumOperations.EQUAL_TO, b); :}
+             | expr:a NOT_EQUAL_TO expr:b {: RESULT = new Operation(a, EnumOperations.NOT_EQUAL_TO, b); :};
+
+logical ::= expr:a AND expr:b {: RESULT = new Operation(a, EnumOperations.AND, b); :}
+          | expr:a OR expr:b {: RESULT = new Operation(a, EnumOperations.OR, b); :};
 
 unitary ::= MINUS expr:e {: RESULT = new Operation(e, EnumUnitaryOperations.MINUS); :}
-          | NOT expr:e {: RESULT = new Operation(e, EnumUnitaryOperations.NOT); :};
+          | NOT expr:e {: RESULT = new Operation(e, EnumUnitaryOperations.NOT); :}
+          | expr:e INCREASE  {: RESULT = new Operation(e, EnumUnitaryOperations.INCREASE); :}
+          | expr:e DECREASE  {: RESULT = new Operation(e, EnumUnitaryOperations.DECREASE); :};

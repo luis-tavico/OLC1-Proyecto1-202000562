@@ -8,60 +8,59 @@ package analyzersStatPy;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int INCREASE = 53;
-  public static final int DIVIDE = 35;
-  public static final int NOT_EQUAL_TO = 48;
-  public static final int CHAR = 26;
-  public static final int PERIOD = 49;
-  public static final int RIGHT_SQUARE_BRACKET = 41;
+  public static final int INCREASE = 52;
+  public static final int DIVIDE = 34;
+  public static final int NOT_EQUAL_TO = 47;
+  public static final int CHAR = 25;
+  public static final int PERIOD = 48;
+  public static final int RIGHT_SQUARE_BRACKET = 40;
   public static final int CASE = 8;
-  public static final int DOUBLE = 25;
-  public static final int INTEGER = 19;
+  public static final int DOUBLE = 24;
+  public static final int INTEGER = 18;
   public static final int CONTINUE = 15;
-  public static final int INT = 24;
+  public static final int INT = 23;
   public static final int FOR = 10;
-  public static final int MINUS = 33;
-  public static final int GREATER_THAN = 43;
+  public static final int MINUS = 32;
+  public static final int GREATER_THAN = 42;
   public static final int WRITE = 14;
-  public static final int CHARACTER = 21;
-  public static final int NOT = 31;
-  public static final int AND = 29;
+  public static final int CHARACTER = 20;
+  public static final int NOT = 30;
+  public static final int AND = 28;
   public static final int ELSEIF = 5;
-  public static final int OR = 30;
-  public static final int COMMA = 50;
-  public static final int BOOL = 27;
-  public static final int LESS_EQUAL = 44;
-  public static final int RIGHT_PARENTHESIS = 37;
-  public static final int PLUS = 32;
-  public static final int LEFT_CURLY_BRACKET = 38;
+  public static final int OR = 29;
+  public static final int COMMA = 49;
+  public static final int BOOL = 26;
+  public static final int LESS_EQUAL = 43;
+  public static final int RIGHT_PARENTHESIS = 36;
+  public static final int PLUS = 31;
+  public static final int LEFT_CURLY_BRACKET = 37;
   public static final int MAIN = 3;
   public static final int IF = 4;
-  public static final int ID = 23;
+  public static final int ID = 22;
   public static final int EOF = 0;
-  public static final int BOOLEAN = 22;
-  public static final int DECIMAL = 18;
-  public static final int RETURN = 17;
-  public static final int EQUAL = 46;
-  public static final int GREATER_EQUAL = 45;
-  public static final int LEFT_SQUARE_BRACKET = 40;
+  public static final int BOOLEAN = 21;
+  public static final int DECIMAL = 17;
+  public static final int EQUAL = 45;
+  public static final int GREATER_EQUAL = 44;
+  public static final int LEFT_SQUARE_BRACKET = 39;
   public static final int error = 1;
-  public static final int SEMI_COLON = 51;
-  public static final int DECREASE = 54;
+  public static final int SEMI_COLON = 50;
+  public static final int DECREASE = 53;
   public static final int BREAK = 16;
   public static final int VOID = 2;
-  public static final int EQUAL_TO = 47;
+  public static final int EQUAL_TO = 46;
   public static final int SWITCH = 7;
-  public static final int TIMES = 34;
-  public static final int COLON = 52;
+  public static final int TIMES = 33;
+  public static final int COLON = 51;
   public static final int ELSE = 6;
   public static final int WHILE = 11;
-  public static final int DOLLAR = 55;
+  public static final int DOLLAR = 54;
   public static final int DEFAULT = 9;
-  public static final int STRING = 28;
-  public static final int TEXT = 20;
-  public static final int LESS_THAN = 42;
-  public static final int RIGHT_CURLY_BRACKET = 39;
-  public static final int LEFT_PARENTHESIS = 36;
+  public static final int STRING = 27;
+  public static final int TEXT = 19;
+  public static final int LESS_THAN = 41;
+  public static final int RIGHT_CURLY_BRACKET = 38;
+  public static final int LEFT_PARENTHESIS = 35;
   public static final int DO = 12;
   public static final int CONSOLE = 13;
   public static final String[] terminalNames = new String[] {
@@ -82,7 +81,6 @@ public class sym {
   "WRITE",
   "CONTINUE",
   "BREAK",
-  "RETURN",
   "DECIMAL",
   "INTEGER",
   "TEXT",
