@@ -20,6 +20,7 @@ import instructions.While;
 import instructions.DoWhile; 
 import instructions.Print;
 import instructions.Return;
+import instructions.SearchValue;
 
 import enums.EnumOperations;
 import enums.EnumTerminals;
@@ -61,7 +62,7 @@ non terminal ini;
 non terminal LinkedList<Statement> statements;
 non terminal Statement statement;
 non terminal Operation expr;
-non terminal LinkedList<Operation> args_list;
+non terminal LinkedList<Operation> expr_list;
 non terminal LinkedList<ElseIf> elseifs;
 non terminal LinkedList<Case> cases;
 
@@ -117,13 +118,13 @@ statement ::= data_type:d ID:i SEMI_COLON {: RESULT = new Declaration_Assignment
             | error RIGHT_CURLY_BRACKET
             | error SEMI_COLON;
 
-data_type ::= INT
-            | DOUBLE
-            | CHAR
-            | STRING
-            | BOOL;
+data_type ::= INT:i {: RESULT = String.valueOf(i); :}
+            | DOUBLE:d {: RESULT = String.valueOf(d); :}
+            | CHAR:c {: RESULT = String.valueOf(c); :}
+            | STRING:s {: RESULT = String.valueOf(s); :}
+            | BOOL:b {: RESULT = String.valueOf(b); :};
 
-args_list ::= args_list:a COMMA expr:e {:RESULT = a; RESULT.add(e); :}
+expr_list ::= expr_list:l COMMA expr:e {: RESULT = l; RESULT.add(e); :}
             | expr:e {: RESULT = new LinkedList<Operation>(); RESULT.add(e); :};
 
 function ::= VOID ID:i LEFT_PARENTHESIS RIGHT_PARENTHESIS LEFT_CURLY_BRACKET funcstatements:f RIGHT_CURLY_BRACKET {: RESULT = new Function(i, f, variables, variables_json); :};
@@ -132,10 +133,9 @@ funcstatements ::= funcstatement:f funcstatements:s  {: RESULT = s; RESULT.add(f
                  | funcstatement:f {: RESULT = new LinkedList<Declaration_Assignment>(); RESULT.add(f); :};
 
 funcstatement ::= data_type ID:i SEMI_COLON {: RESULT = new Declaration_Assignment(i); :}
-                | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); variables.add(new Variable(i, e, ""));:}
+                | data_type ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); variables.add(new Variable(i, e, "")); :}
                 | ID:i EQUAL expr:e SEMI_COLON {: RESULT = new Declaration_Assignment(i, e); :}
-                | data_type LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET ID EQUAL LEFT_CURLY_BRACKET args_list:a RIGHT_CURLY_BRACKET SEMI_COLON
-                | data_type ID EQUAL DOLLAR LEFT_CURLY_BRACKET args_list:a RIGHT_CURLY_BRACKET SEMI_COLON;
+                | data_type LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET ID:i EQUAL LEFT_CURLY_BRACKET expr_list:l RIGHT_CURLY_BRACKET SEMI_COLON {: RESULT = new Declaration_Assignment(i, l); :};
 
 if ::= IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new If(e, s); :}
      | IF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET ELSE LEFT_CURLY_BRACKET statements:t RIGHT_CURLY_BRACKET {: RESULT = new If(e, s, t); :}
@@ -157,9 +157,10 @@ expr ::= symbols:s {: RESULT = s; :}
        | unitary:u {: RESULT = u; :}
        | LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS {: RESULT = new Operation(e); :};
 
-symbols ::= ID:i {:RESULT = new Operation(i, EnumTerminals.ID);:}
-          | TEXT:t {:RESULT = new Operation(t, EnumTerminals.TEXT);:}
-          | CHARACTER:c {:RESULT = new Operation(c, EnumTerminals.CHARACTER);:};
+symbols ::= ID:i {: RESULT = new Operation(i, EnumTerminals.ID); :}
+          | TEXT:t {: RESULT = new Operation(t, EnumTerminals.TEXT); :}
+          | CHARACTER:c {: RESULT = new Operation(c, EnumTerminals.CHARACTER); :}
+          | DOLLAR LEFT_CURLY_BRACKET ID COMMA TEXT:p COMMA TEXT:i RIGHT_CURLY_BRACKET {: SearchValue val = new SearchValue(variables_json, String.valueOf(p), String.valueOf(i)); RESULT = new Operation(val.getValue(), val.getTypeTerminal()); :};
 
 aritmetic ::= expr:a PLUS expr:b {: RESULT = new Operation(a, EnumOperations.PLUS, b); :}
             | expr:a MINUS expr:b {: RESULT = new Operation(a, EnumOperations.MINUS, b); :}

@@ -1,15 +1,19 @@
 package instructions;
 
 import enums.EnumTypes;
-import java.util.Iterator;
 import java.util.LinkedList;
-import utils.Utils;
 
 public class Declaration_Assignment implements Statement {
 
     String varId;
-    EnumTypes type;
+    //EnumTypes type;
     Operation expr;
+    LinkedList<Operation> variables = new LinkedList<>(); 
+
+    public Declaration_Assignment(String varId, LinkedList<Operation> variables) {
+        this.varId = varId;
+        this.variables = variables;
+    }
 
     public Declaration_Assignment(String varId, Operation expr) {
         this.varId = varId;
