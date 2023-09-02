@@ -31,17 +31,17 @@ public class Switch implements Statement {
 
         int i = 1;
         for (Case aCase : cases) {
-            str.append("\t").append(aCase.expr.translatePython()).append(": ");
+            str.append("\t\t").append(aCase.expr.translatePython()).append(": ");
             for (Statement statement : aCase.statements) {
                 if (statement != null) {
-                    str.append(Utils.addTabs(statement.translatePython()).replaceAll("[\t\n]", ""));
+                    str.append(Utils.addTabs(statement.translatePython()).replaceAll("[\t\n]", "")).append(" ");
                 }
             }
             str.append(",\n");
             i++;
         }
         if (default_statement != null) {
-            str.append("\t").append(String.valueOf(i)).append(": ");
+            str.append("\t\t").append(String.valueOf(i)).append(": ");
             for (Statement else_statement : default_statement) {
                 if (else_statement != null) {
                     str.append(Utils.addTabs(else_statement.translatePython()).replaceAll("[\t\n]", "")).append("\n");
