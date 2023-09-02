@@ -640,7 +640,7 @@ public class Syntactic extends java_cup.runtime.lr_parser {
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
-        System.out.println("Error irrecuperable en: " + s.value + ", Linea: " + s.left + ", Columna: " + s.right);
+
     }
 
             

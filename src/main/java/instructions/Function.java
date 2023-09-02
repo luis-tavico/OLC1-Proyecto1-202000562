@@ -45,12 +45,13 @@ public class Function implements Statement {
                             for (Variable variable : variables) {
                                 if (variable != null) {
                                     if (decla_assig.expr.translatePython().equals(variable.variable_name)) {
-                                        title = variable.variable_value;
+                                        title = variable.variable_value.replace("\"", "");
                                     }
                                 }
                             }
                         } else {
                             title = decla_assig.expr.translatePython();
+                            title = title.replace("\"", "");
                         }
                     } else if (decla_assig.varId.equalsIgnoreCase("ejex")) {
                         names = new String[decla_assig.variables.size()];
@@ -61,19 +62,17 @@ public class Function implements Statement {
                                     for (Variable variable : variables) {
                                         if (variable != null) {
                                             if (operation.translatePython().equals(variable.variable_name)) {
-                                                names[i] = variable.variable_value;
+                                                names[i] = variable.variable_value.replace("\"", "");
                                             }
                                         }
                                     }
                                 } else {
-                                    names[i] = operation.value;
+                                    names[i] = operation.value.replace("\"", "");
                                 }
                             }
                             i++;
                         }
-                        for (String name : names) {
-                            System.out.println(name);
-                        }
+
                     } else if (decla_assig.varId.equalsIgnoreCase("valores")) {
                         values = new double[decla_assig.variables.size()];
                         int i = 0;
@@ -93,20 +92,32 @@ public class Function implements Statement {
                             }
                             i++;
                         }
-                        for (double value : values) {
-                            System.out.println(value);
-                        }
+
                     } else if (decla_assig.varId.equalsIgnoreCase("titulox")) {
                         if (decla_assig.expr.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
-                            System.out.println("entro en titulox");
+                            for (Variable variable : variables) {
+                                if (variable != null) {
+                                    if (decla_assig.expr.translatePython().equals(variable.variable_name)) {
+                                        titleX = variable.variable_value.replace("\"", "");
+                                    }
+                                }
+                            }
                         } else {
                             titleX = decla_assig.expr.translatePython();
+                            titleX = titleX.replace("\"", "");
                         }
                     } else if (decla_assig.varId.equalsIgnoreCase("tituloy")) {
                         if (decla_assig.expr.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
-                            System.out.println("entro en tituloy");
+                            for (Variable variable : variables) {
+                                if (variable != null) {
+                                    if (decla_assig.expr.translatePython().equals(variable.variable_name)) {
+                                        titleY = variable.variable_value.replace("\"", "");
+                                    }
+                                }
+                            }
                         } else {
                             titleY = decla_assig.expr.translatePython();
+                            titleY = titleY.replace("\"", "");
                         }
                     }
                 }
@@ -130,12 +141,13 @@ public class Function implements Statement {
                             for (Variable variable : variables) {
                                 if (variable != null) {
                                     if (decla_assig.expr.translatePython().equals(variable.variable_name)) {
-                                        title = variable.variable_value;
+                                        title = variable.variable_value.replace("\"", "");;
                                     }
                                 }
                             }
                         } else {
                             title = decla_assig.expr.translatePython();
+                            title = title.replace("\"", "");
                         }
                     } else if (decla_assig.varId.equalsIgnoreCase("ejex")) {
                         names = new String[decla_assig.variables.size()];
@@ -146,19 +158,17 @@ public class Function implements Statement {
                                     for (Variable variable : variables) {
                                         if (variable != null) {
                                             if (operation.translatePython().equals(variable.variable_name)) {
-                                                names[i] = variable.variable_value;
+                                                names[i] = variable.variable_value.replace("\"", "");
                                             }
                                         }
                                     }
                                 } else {
-                                    names[i] = operation.value;
+                                    names[i] = operation.value.replace("\"", "");
                                 }
                             }
                             i++;
                         }
-                        for (String name : names) {
-                            System.out.println(name);
-                        }
+
                     } else if (decla_assig.varId.equalsIgnoreCase("valores")) {
                         values = new double[decla_assig.variables.size()];
                         int i = 0;
@@ -178,9 +188,6 @@ public class Function implements Statement {
                             }
                             i++;
                         }
-                        for (double value : values) {
-                            System.out.println(value);
-                        }
                     }
                 }
             }
@@ -191,7 +198,7 @@ public class Function implements Statement {
             pie.createChart(title, values, names);
             pie.setVisible(true);
         }
-        
+
         return "";
     }
 

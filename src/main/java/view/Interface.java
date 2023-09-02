@@ -539,7 +539,7 @@ public class Interface extends javax.swing.JFrame {
 
     private void btnUserManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserManualActionPerformed
         try {
-            File filePDF = new File("src/main/java/docs/[OLC1]P12S2023.pdf");
+            File filePDF = new File("src/main/java/docs/MANUAL DE USUARIO.pdf");
 
             if (filePDF.exists()) {
                 Desktop desktop = Desktop.getDesktop();
@@ -558,7 +558,7 @@ public class Interface extends javax.swing.JFrame {
 
     private void btnTechManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTechManualActionPerformed
         try {
-            File filePDF = new File("src/main/java/docs/[OLC1]P12S2023.pdf");
+            File filePDF = new File("src/main/java/docs/MANUAL TECNICO.pdf");
 
             if (filePDF.exists()) {
                 Desktop desktop = Desktop.getDesktop();

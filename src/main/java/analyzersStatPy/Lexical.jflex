@@ -96,9 +96,9 @@ ID = [a-zA-Z]+ | [a-zA-Z_][a-zA-Z0-9_]+
 
 \n                      { yychar = 0; }
 
-{BLANKS}                {}
-{MULTILINE_COMMENT}     { System.out.println(yytext()); }
-{SIMPLE_COMMENT}        { System.out.println(yytext()); }
+{BLANKS}                { }
+{MULTILINE_COMMENT}     { }
+{SIMPLE_COMMENT}        { }
 
 {DECIMAL}               { tokens.add(new Tokens(yytext(), "decimal", yyline, (int)yychar)); return new Symbol(sym.DECIMAL, yyline, (int)yychar, yytext()); }
 {INTEGER}               { tokens.add(new Tokens(yytext(), "entero", yyline, (int)yychar)); return new Symbol(sym.INTEGER, yyline, (int)yychar, yytext()); }
