@@ -10,6 +10,6 @@ public class Tokens {
         this.lexeme = lexeme;
         this.token = token;
         this.line = line;
-        this.column = (column-1);
+        this.column = (column);
     }
 }

@@ -42,10 +42,10 @@ STRING = \" ([^\"] | "\\\"")+ \"
 
 "{"                     { tokens.add(new Tokens(yytext(), "parentesis_abierto", yyline, (int)yychar)); return new Symbol(sym.LEFT_CURLY_BRACKET, yyline, (int)yychar, yytext()); }
 "}"                     { tokens.add(new Tokens(yytext(), "parentesis_cerrado", yyline, (int)yychar)); return new Symbol(sym.RIGHT_CURLY_BRACKET, yyline, (int)yychar, yytext()); }
-"["                     { tokens.add(new Tokens(yytext(), "llave_abierta", yyline, (int)yychar)); return new Symbol(sym.LEFT_SQUARE_BRACKET, yyline, (int)yychar, yytext()); }
-"]"                     { tokens.add(new Tokens(yytext(), "llave_cerrada", yyline, (int)yychar)); return new Symbol(sym.RIGHT_SQUARE_BRACKET, yyline, (int)yychar, yytext()); }
-","                     { tokens.add(new Tokens(yytext(), "corchete_abierto", yyline, (int)yychar)); return new Symbol(sym.COMMA, yyline, (int)yychar, yytext()); }
-":"                     { tokens.add(new Tokens(yytext(), "corchete_cerrado", yyline, (int)yychar)); return new Symbol(sym.COLON, yyline, (int)yychar, yytext()); }
+"["                     { tokens.add(new Tokens(yytext(), "corchete_abierto", yyline, (int)yychar)); return new Symbol(sym.LEFT_SQUARE_BRACKET, yyline, (int)yychar, yytext()); }
+"]"                     { tokens.add(new Tokens(yytext(), "corchete_cerrado", yyline, (int)yychar)); return new Symbol(sym.RIGHT_SQUARE_BRACKET, yyline, (int)yychar, yytext()); }
+","                     { tokens.add(new Tokens(yytext(), "coma", yyline, (int)yychar)); return new Symbol(sym.COMMA, yyline, (int)yychar, yytext()); }
+":"                     { tokens.add(new Tokens(yytext(), "dos_puntos", yyline, (int)yychar)); return new Symbol(sym.COLON, yyline, (int)yychar, yytext()); }
 
 \n                      { yychar = 0; }
 

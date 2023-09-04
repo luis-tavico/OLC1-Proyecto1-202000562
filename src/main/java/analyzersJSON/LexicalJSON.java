@@ -651,22 +651,22 @@ public class LexicalJSON implements java_cup.runtime.Scanner {
             // fall through
           case 16: break;
           case 6: 
-            { tokens.add(new Tokens(yytext(), "llave_abierta", yyline, (int)yychar)); return new Symbol(sym.LEFT_SQUARE_BRACKET, yyline, (int)yychar, yytext());
+            { tokens.add(new Tokens(yytext(), "corchete_abierto", yyline, (int)yychar)); return new Symbol(sym.LEFT_SQUARE_BRACKET, yyline, (int)yychar, yytext());
             } 
             // fall through
           case 17: break;
           case 7: 
-            { tokens.add(new Tokens(yytext(), "llave_cerrada", yyline, (int)yychar)); return new Symbol(sym.RIGHT_SQUARE_BRACKET, yyline, (int)yychar, yytext());
+            { tokens.add(new Tokens(yytext(), "corchete_cerrado", yyline, (int)yychar)); return new Symbol(sym.RIGHT_SQUARE_BRACKET, yyline, (int)yychar, yytext());
             } 
             // fall through
           case 18: break;
           case 8: 
-            { tokens.add(new Tokens(yytext(), "corchete_abierto", yyline, (int)yychar)); return new Symbol(sym.COMMA, yyline, (int)yychar, yytext());
+            { tokens.add(new Tokens(yytext(), "coma", yyline, (int)yychar)); return new Symbol(sym.COMMA, yyline, (int)yychar, yytext());
             } 
             // fall through
           case 19: break;
           case 9: 
-            { tokens.add(new Tokens(yytext(), "corchete_cerrado", yyline, (int)yychar)); return new Symbol(sym.COLON, yyline, (int)yychar, yytext());
+            { tokens.add(new Tokens(yytext(), "dos_puntos", yyline, (int)yychar)); return new Symbol(sym.COLON, yyline, (int)yychar, yytext());
             } 
             // fall through
           case 20: break;
