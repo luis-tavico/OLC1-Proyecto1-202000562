@@ -142,6 +142,7 @@ public class Interface extends javax.swing.JFrame {
 
         menuFile.setText("Archivo");
 
+        btnOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         btnOpen.setText("Abrir");
         btnOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -150,6 +151,7 @@ public class Interface extends javax.swing.JFrame {
         });
         menuFile.add(btnOpen);
 
+        btnSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         btnSave.setText("Guardar");
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -158,6 +160,7 @@ public class Interface extends javax.swing.JFrame {
         });
         menuFile.add(btnSave);
 
+        btnSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         btnSaveAs.setText("Guardar Como");
         btnSaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -419,6 +422,12 @@ public class Interface extends javax.swing.JFrame {
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
+                    
+                    String sintax_errors = "";
+                    for (SintaxError sintax_error : sintaxErrorsStatPy) {
+                        sintax_errors += "Error sintactico en: " + sintax_error.lexeme + ", linea: " + sintax_error.line + ", columna: " + sintax_error.column;
+                    } 
+                    this.areaResult.insert(sintax_errors,0);
 
                 } else {
                     this.areaResult.insert(Utils.translatePython(ast), 0);
@@ -471,6 +480,12 @@ public class Interface extends javax.swing.JFrame {
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(this, "¡Error al crear el archivo de reporte!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
+                    
+                    String sintax_errors = "";
+                    for (SintaxError sintax_error : sintaxErrorsJSON) {
+                        sintax_errors += "Error sintactico en: " + sintax_error.lexeme + ", linea: " + sintax_error.line + ", columna: " + sintax_error.column;
+                    } 
+                    this.areaResult.insert(sintax_errors,0);
 
                 } else {
                     JOptionPane.showMessageDialog(this, "¡Analisis realizado exitosamente!", "Informacion", JOptionPane.INFORMATION_MESSAGE);

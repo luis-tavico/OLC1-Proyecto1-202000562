@@ -165,7 +165,8 @@ symbols ::= ID:i {: RESULT = new Operation(i, EnumTerminals.ID); :}
           | INTEGER:i {: RESULT = new Operation(i, EnumTerminals.INTEGER); :}
           | DECIMAL:d {: RESULT = new Operation(d, EnumTerminals.DECIMAL); :}
           | BOOLEAN:b {: RESULT = new Operation(b, EnumTerminals.BOOLEAN); :}
-          | DOLLAR LEFT_CURLY_BRACKET ID COMMA TEXT:p COMMA TEXT:i RIGHT_CURLY_BRACKET {: SearchValue val = new SearchValue(variables_json, String.valueOf(p), String.valueOf(i)); RESULT = new Operation(val.getValue(), val.getTypeTerminal()); :};
+          | DOLLAR LEFT_CURLY_BRACKET ID COMMA TEXT:p COMMA TEXT:i RIGHT_CURLY_BRACKET {: SearchValue val = new SearchValue(variables_json, String.valueOf(p), String.valueOf(i)); RESULT = new Operation(val.getValue(), val.getTypeTerminal()); :}
+          | DOLLAR LEFT_CURLY_BRACKET TEXT COMMA TEXT:p COMMA TEXT:i RIGHT_CURLY_BRACKET {: SearchValue val = new SearchValue(variables_json, String.valueOf(p), String.valueOf(i)); RESULT = new Operation(val.getValue(), val.getTypeTerminal()); :};
 
 aritmetic ::= expr:a PLUS expr:b {: RESULT = new Operation(a, EnumOperations.PLUS, b); :}
             | expr:a MINUS expr:b {: RESULT = new Operation(a, EnumOperations.MINUS, b); :}
