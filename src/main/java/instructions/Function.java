@@ -44,7 +44,7 @@ public class Function implements Statement {
                         if (decla_assig.expr.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
                             for (Variable variable : variables) {
                                 if (variable != null) {
-                                    if (decla_assig.expr.translatePython().equals(variable.variable_name)) {
+                                    if (decla_assig.expr.translatePython().equalsIgnoreCase(variable.variable_name)) {
                                         title = variable.variable_value.replace("\"", "");
                                     }
                                 }
@@ -61,7 +61,7 @@ public class Function implements Statement {
                                 if (operation.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
                                     for (Variable variable : variables) {
                                         if (variable != null) {
-                                            if (operation.translatePython().equals(variable.variable_name)) {
+                                            if (operation.translatePython().equalsIgnoreCase(variable.variable_name)) {
                                                 names[i] = variable.variable_value.replace("\"", "");
                                             }
                                         }
@@ -81,7 +81,7 @@ public class Function implements Statement {
                                 if (operation.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
                                     for (Variable variable : variables) {
                                         if (variable != null) {
-                                            if (operation.translatePython().equals(variable.variable_name)) {
+                                            if (operation.translatePython().equalsIgnoreCase(variable.variable_name)) {
                                                 values[i] = convertToDecimal(variable.variable_value);
                                             }
                                         }
@@ -97,7 +97,7 @@ public class Function implements Statement {
                         if (decla_assig.expr.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
                             for (Variable variable : variables) {
                                 if (variable != null) {
-                                    if (decla_assig.expr.translatePython().equals(variable.variable_name)) {
+                                    if (decla_assig.expr.translatePython().equalsIgnoreCase(variable.variable_name)) {
                                         titleX = variable.variable_value.replace("\"", "");
                                     }
                                 }
@@ -110,7 +110,7 @@ public class Function implements Statement {
                         if (decla_assig.expr.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
                             for (Variable variable : variables) {
                                 if (variable != null) {
-                                    if (decla_assig.expr.translatePython().equals(variable.variable_name)) {
+                                    if (decla_assig.expr.translatePython().equalsIgnoreCase(variable.variable_name)) {
                                         titleY = variable.variable_value.replace("\"", "");
                                     }
                                 }
@@ -140,7 +140,7 @@ public class Function implements Statement {
                         if (decla_assig.expr.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
                             for (Variable variable : variables) {
                                 if (variable != null) {
-                                    if (decla_assig.expr.translatePython().equals(variable.variable_name)) {
+                                    if (decla_assig.expr.translatePython().equalsIgnoreCase(variable.variable_name)) {
                                         title = variable.variable_value.replace("\"", "");;
                                     }
                                 }
@@ -157,7 +157,7 @@ public class Function implements Statement {
                                 if (operation.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
                                     for (Variable variable : variables) {
                                         if (variable != null) {
-                                            if (operation.translatePython().equals(variable.variable_name)) {
+                                            if (operation.translatePython().equalsIgnoreCase(variable.variable_name)) {
                                                 names[i] = variable.variable_value.replace("\"", "");
                                             }
                                         }
@@ -177,7 +177,7 @@ public class Function implements Statement {
                                 if (operation.typeTerminal.compareTo(EnumTerminals.ID) == 0) {
                                     for (Variable variable : variables) {
                                         if (variable != null) {
-                                            if (operation.translatePython().equals(variable.variable_name)) {
+                                            if (operation.translatePython().equalsIgnoreCase(variable.variable_name)) {
                                                 values[i] = convertToDecimal(variable.variable_value);
                                             }
                                         }

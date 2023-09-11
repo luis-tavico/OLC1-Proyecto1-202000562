@@ -68,9 +68,9 @@ public class PythonUtils {
                 return value;
             }
             case BOOLEAN -> {
-                if ("true".equals(value)) {
+                if ("true".equalsIgnoreCase(value)) {
                     return "True";
-                } else if ("false".equals(value)) {
+                } else if ("false".equalsIgnoreCase(value)) {
                     return "False";
                 }
             }

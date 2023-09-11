@@ -30,7 +30,7 @@ public class Declaration_Assignment implements Statement {
         if (expr != null) {
             str.append(varId).append(" = ").append(expr.translatePython()).append("\n");
         } else {
-            str.append("var ").append(varId);
+            str.append(varId).append(" = None");
         }
 
         return str.toString();
