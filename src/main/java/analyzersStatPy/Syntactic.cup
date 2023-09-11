@@ -14,6 +14,7 @@ import instructions.If;
 import instructions.ElseIf;
 import instructions.Switch;
 import instructions.Case;
+import instructions.Default;
 import instructions.For;
 import instructions.While;
 import instructions.DoWhile; 
@@ -62,6 +63,7 @@ non terminal Operation expr;
 non terminal LinkedList<Operation> expr_list;
 non terminal LinkedList<ElseIf> elseifs;
 non terminal LinkedList<Case> cases;
+non terminal Default default;
 
 non terminal Operation symbols;
 non terminal Operation aritmetic;
@@ -107,7 +109,7 @@ statement ::= data_type:d ID:i SEMI_COLON {: RESULT = new Declaration_Assignment
             | if:i {: RESULT=i; :}
             | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {:RESULT = new Switch(e);:}
             | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET cases:c RIGHT_CURLY_BRACKET {:RESULT = new Switch(e, c);:}
-            | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET cases:c DEFAULT COLON statements:s RIGHT_CURLY_BRACKET {: RESULT = new Switch(e, c, s); :}
+            | SWITCH LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET cases:c default:d RIGHT_CURLY_BRACKET {: RESULT = new Switch(e, c, d); :}
             | for:f {: RESULT=f; :}
             | WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {:RESULT = new While(e, s);:}
             | WHILE LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {:RESULT = new While(e);:}            
@@ -148,6 +150,8 @@ elseifs ::= elseifs:f ELSEIF LEFT_PARENTHESIS expr:e RIGHT_PARENTHESIS LEFT_CURL
 
 cases ::= cases:c CASE expr:e COLON statements:s {: RESULT = c; RESULT.add(new Case(e, s)); :}
         | CASE expr:e COLON statements:s {: RESULT = new LinkedList<Case>(); RESULT.add(new Case(e, s)); :};
+
+default ::= DEFAULT COLON statements:s {: RESULT = new Default(s); :};
 
 for ::= FOR LEFT_PARENTHESIS INT ID:i EQUAL INTEGER:n SEMI_COLON expr:e SEMI_COLON expr:x RIGHT_PARENTHESIS LEFT_CURLY_BRACKET statements:s RIGHT_CURLY_BRACKET {: RESULT = new For(i, n, e, x, s); :}
       | FOR LEFT_PARENTHESIS INT ID:i EQUAL INTEGER:n SEMI_COLON expr:e SEMI_COLON expr:x RIGHT_PARENTHESIS LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET {: RESULT = new For(i, n, e, x); :};

@@ -3,13 +3,11 @@ package instructions;
 import java.util.LinkedList;
 import utils.Utils;
 
-public class Case implements Statement {
+public class Default implements Statement {
 
-    Operation expr;
     LinkedList<Statement> statements;
 
-    public Case(Operation expr, LinkedList<Statement> statements) {
-        this.expr = expr;
+    public Default(LinkedList<Statement> statements) {
         this.statements = statements;
     }
 
@@ -17,8 +15,8 @@ public class Case implements Statement {
     public String translatePython() {
 
         StringBuilder str = new StringBuilder();
-        str.append("case ").append(expr.translatePython()).append(" :\n");
-        
+        str.append("case _ :\n");
+
         for (Statement statement : statements) {
             if (statement != null) {
                 str.append(Utils.addTabs(statement.translatePython())).append("\n");
@@ -26,6 +24,7 @@ public class Case implements Statement {
         }
 
         return str.toString();
+
     }
 
 }
