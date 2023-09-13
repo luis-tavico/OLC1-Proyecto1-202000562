@@ -128,7 +128,8 @@ public class Function implements Statement {
             bar.setLocationRelativeTo(null);
             bar.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             bar.createChart(title, titleX, titleY, values, names);
-            bar.setVisible(true);
+            //bar.setVisible(true);
+            bar.setVisible(false);
 
         } else if (funcId.equalsIgnoreCase("GraficaPie")) {
             double values[] = new double[0];
@@ -196,7 +197,8 @@ public class Function implements Statement {
             pie.setLocationRelativeTo(null);
             pie.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             pie.createChart(title, values, names);
-            pie.setVisible(true);
+            //pie.setVisible(true);
+            pie.setVisible(false);
         }
 
         return "";

@@ -74,15 +74,7 @@ public class Operation implements Statement {
 
         switch (typeOp) {
             case BINARY -> {
-                if (PythonUtils.pythonSymbolBinaryOperators(type).equals("+")) {
-                    if (left.typeTerminal.compareTo(EnumTerminals.TEXT) == 0) {
-                        str.append(left.translatePython()).append(" , ").append(right.translatePython());
-                    } else {
-                        str.append(left.translatePython()).append(" ").append(PythonUtils.pythonSymbolBinaryOperators(type)).append(" ").append(right.translatePython());
-                    }
-                } else {
-                    str.append(left.translatePython()).append(" ").append(PythonUtils.pythonSymbolBinaryOperators(type)).append(" ").append(right.translatePython());
-                }
+                str.append(left.translatePython()).append(" ").append(PythonUtils.pythonSymbolBinaryOperators(type)).append(" ").append(right.translatePython());
             }
             case UNITARY -> {
                 if (PythonUtils.pythonSymbolUnitaryOperators(typeUnitary).equals("++") || PythonUtils.pythonSymbolUnitaryOperators(typeUnitary).equals("--")) {
